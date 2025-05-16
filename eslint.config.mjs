@@ -1,8 +1,8 @@
+import { FlatCompat } from "@eslint/eslintrc";
+import boundariesPlugin from "eslint-plugin-boundaries";
+import simpleImportSortPlugin from "eslint-plugin-simple-import-sort";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-import simpleImportSortPlugin from "eslint-plugin-simple-import-sort";
-import boundariesPlugin from "eslint-plugin-boundaries";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,7 +20,7 @@ const eslintConfig = [
     "plugin:react-hooks/recommended",
     "plugin:@next/next/recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
   ),
   {
     plugins: {
@@ -39,6 +39,14 @@ const eslintConfig = [
       // Simple import sort
       "simple-import-sort/imports": "warn",
       "simple-import-sort/exports": "warn",
+      "simple-import-sort/extensions": [
+        "warn",
+        { js: "never", ts: "never", jsx: "never", tsx: "never" },
+      ],
+      "import/prefer-default-export": [
+        "off",
+        { target: "single" }, // default is "single"
+      ],
       // Allow JSX in .tsx files
       "react/jsx-filename-extension": [
         "error",
