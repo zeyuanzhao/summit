@@ -41,12 +41,6 @@ const eslintConfig = [
       {
         // Configuration specifically for TypeScript files
         files: ["**/*.ts", "**/*.tsx", "**/*.mts"], // Applies these rules only to TypeScript files
-        plugins: [
-          "@typescript-eslint", // TypeScript specific linting rules
-          "unused-imports", // Plugin to automatically remove unused imports
-          "tailwindcss", // Tailwind CSS specific linting
-          "simple-import-sort", // Plugin to enforce consistent import order
-        ],
         extends: [
           "plugin:tailwindcss/recommended", // Recommended Tailwind CSS linting rules
           "airbnb", // Airbnb's full style guide (JS + React)
