@@ -1,6 +1,8 @@
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
+import simpleImportSortPlugin from "eslint-plugin-simple-import-sort";
+import boundariesPlugin from "eslint-plugin-boundaries";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -10,102 +12,50 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-
+  ...compat.extends(
+    "airbnb",
+    "next/core-web-vitals",
+    "next/typescript",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@next/next/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ),
   {
-    extends: [
-      "airbnb-base", // Airbnb's base JS style guide
-      "next/core-web-vitals", // Next.js core web vitals plugin to avoid build warnings
-      "plugin:prettier/recommended", // Integrates Prettier with ESLint
-    ],
+    plugins: {
+      "simple-import-sort": simpleImportSortPlugin,
+      boundaries: boundariesPlugin,
+    },
+    settings: {
+      "boundaries/elements": [
+        { type: "app", pattern: "app/*" },
+        { type: "components", pattern: "components/*" },
+        { type: "lib", pattern: "lib/*" },
+      ],
+    },
     rules: {
-      "prettier/prettier": [
+      "react/react-in-jsx-scope": "off",
+      // Simple import sort
+      "simple-import-sort/imports": "warn",
+      "simple-import-sort/exports": "warn",
+      // Allow JSX in .tsx files
+      "react/jsx-filename-extension": [
+        "error",
+        { extensions: [".tsx", ".jsx"] },
+      ],
+      // Boundaries plugin example rule (customize as needed)
+      "boundaries/element-types": [
         "error",
         {
-          singleQuote: false, // Use single quotes instead of double quotes
-          endOfLine: "auto", // Maintain consistent end of line behavior across environments
-          semi: false, // Omit semicolons at the end of statements
-        },
-      ], // Prevent conflicts between Prettier and Airbnb ESLint rules
-    },
-    plugins: [
-      "eslint-plugin-react",
-      "eslint-plugin-react-hooks",
-      "eslint-plugin-next",
-      "@typescript-eslint", // TypeScript specific linting rules
-      "unused-imports", // Plugin to automatically remove unused imports
-      "tailwindcss", // Tailwind CSS specific linting
-      "simple-import-sort", // Plugin to enforce consistent import order
-    ],
-    overrides: [
-      {
-        // Configuration specifically for TypeScript files
-        files: ["**/*.ts", "**/*.tsx", "**/*.mts"], // Applies these rules only to TypeScript files
-        extends: [
-          "plugin:tailwindcss/recommended", // Recommended Tailwind CSS linting rules
-          "airbnb", // Airbnb's full style guide (JS + React)
-          "airbnb-typescript", // Airbnb's TypeScript style guide
-          "next/core-web-vitals", // Next.js core web vitals plugin
-          "plugin:prettier/recommended", // Integrates Prettier with ESLint
-        ],
-        parser: "@typescript-eslint/parser", // Uses TypeScript parser for ESLint
-        parserOptions: {
-          project: "./tsconfig.json", // Ensures TypeScript is linted according to the project's tsconfig.json
-        },
-        rules: {
-          "prettier/prettier": [
-            "error",
-            {
-              singleQuote: false, // Use double quotes for TypeScript files
-              endOfLine: "auto", // Maintain consistent end of line behavior across environments
-              semi: false, // Omit semicolons at the end of statements
-              trailingComma: "es5", // Include trailing commas where valid in ES5
-            },
-          ], // Prevent conflicts between Prettier and Airbnb ESLint rules
-          "tailwindcss/no-custom-classname": ["off"], // Allow custom class names (not restricted to Tailwind)
-          "import/no-extraneous-dependencies": "warn", // Warn about extraneous dependencies in TypeScript files
-          "no-param-reassign": "off", // Allow parameter reassignment
-          "consistent-return": "off", // Disable consistent return requirement
-          "no-empty-pattern": "off", // Allow empty destructuring patterns
-          "no-use-before-define": "off", // Disable "use before define" for all variables and functions
-          "no-shadow": "off", // Disable shadowed variable rule
-          "@typescript-eslint/no-shadow": "off", // Disable shadowed variable rule for TypeScript
-          "@typescript-eslint/no-use-before-define": "off", // Disable "use before define" for TypeScript
-          "react/jsx-no-constructed-context-values": "off", // Allow constructed context values in React
-          "import/extensions": "off", // Disable import extensions requirement (TypeScript handles this)
-          "react/function-component-definition": "off", // Allow different ways to define function components
-          "react/destructuring-assignment": "off", // Disable mandatory destructuring in React components
-          "react/require-default-props": "off", // Allow non-defined props to be undefined
-          "react/jsx-props-no-spreading": "off", // Allow prop spreading in JSX (e.g., in _app.tsx or react-hook-form)
-          "react/no-unstable-nested-components": "off", // Allow unstable nested components (needed by i18n library)
-          "@typescript-eslint/comma-dangle": "off", // Disable ESLint comma-dangle rule to avoid conflict with Prettier
-          "@typescript-eslint/consistent-type-imports": "error", // Enforce consistent usage of `import type`
-          "no-restricted-syntax": [
-            "error",
-            "ForInStatement", // Disallow `for-in` loops
-            "LabeledStatement", // Disallow labeled statements
-            "WithStatement", // Disallow `with` statements
-          ], // Override Airbnb configuration to restrict specific syntax
-          "import/prefer-default-export": "off", // Allow named exports without preferring default exports
-          "simple-import-sort/imports": "error", // Enforce sorted imports
-          "simple-import-sort/exports": "error", // Enforce sorted exports
-          "import/order": "off", // Disable import order rule to avoid conflict with simple-import-sort
-          "@typescript-eslint/no-unused-vars": "off", // Disable unused variables rule for TypeScript
-          "unused-imports/no-unused-imports": "error", // Automatically remove unused imports
-          "no-unused-vars": "off", // Disable unused variables rule (covered by unused-imports plugin)
-          "@typescript-eslint/naming-convention": "off", // Disable naming convention rule (can be enabled if desired)
-          "unused-imports/no-unused-vars": [
-            "warn",
-            {
-              vars: "all", // Warn for all unused variables
-              varsIgnorePattern: "^_", // Ignore variables starting with an underscore
-              args: "after-used", // Only warn about unused arguments if they appear after used ones
-              argsIgnorePattern: "^_", // Ignore arguments starting with an underscore
-            },
+          default: "disallow",
+          rules: [
+            { from: "app", allow: ["components"] },
+            { from: "components", allow: ["lib"] },
           ],
         },
-      },
-    ],
+      ],
+    },
   },
 ];
 
