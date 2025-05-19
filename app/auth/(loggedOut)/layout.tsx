@@ -1,8 +1,9 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+
+import { createClient } from "@/lib/supabase/client";
 
 export default function Layout({
   children,

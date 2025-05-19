@@ -39,7 +39,7 @@ const eslintConfig = [
       // Simple import sort
       "simple-import-sort/imports": "warn",
       "simple-import-sort/exports": "warn",
-      "simple-import-sort/extensions": [
+      "import/extensions": [
         "warn",
         { js: "never", ts: "never", jsx: "never", tsx: "never" },
       ],
@@ -52,13 +52,15 @@ const eslintConfig = [
         "error",
         { extensions: [".tsx", ".jsx"] },
       ],
+      // Disable props spreading rule
+      "react/jsx-props-no-spreading": "off",
       // Boundaries plugin example rule (customize as needed)
       "boundaries/element-types": [
         "error",
         {
           default: "disallow",
           rules: [
-            { from: "app", allow: ["components"] },
+            { from: "app", allow: ["components", "lib"] },
             { from: "components", allow: ["lib"] },
           ],
         },
