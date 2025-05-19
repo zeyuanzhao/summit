@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-underscore-dangle */
 import { FlatCompat } from "@eslint/eslintrc";
 import boundariesPlugin from "eslint-plugin-boundaries";
 import simpleImportSortPlugin from "eslint-plugin-simple-import-sort";
