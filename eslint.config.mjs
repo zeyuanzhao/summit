@@ -54,6 +54,8 @@ const eslintConfig = [
       ],
       // Disable props spreading rule
       "react/jsx-props-no-spreading": "off",
+      // Disable require-default-props rule
+      "react/require-default-props": "off",
       // Boundaries plugin example rule (customize as needed)
       "boundaries/element-types": [
         "error",
