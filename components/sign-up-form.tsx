@@ -49,7 +49,7 @@ export function SignUpForm({
         },
       });
       if (signUpError) throw signUpError;
-      router.push("/auth/sign-up-success");
+      router.push("/auth/signup-success");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
