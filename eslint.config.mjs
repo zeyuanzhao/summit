@@ -65,7 +65,7 @@ const eslintConfig = [
           default: "disallow",
           rules: [
             { from: "app", allow: ["components", "lib"] },
-            { from: "components", allow: ["lib"] },
+            { from: "components", allow: ["components", "lib"] },
           ],
         },
       ],
