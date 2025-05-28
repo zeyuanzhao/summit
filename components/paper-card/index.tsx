@@ -16,6 +16,7 @@ export function PaperCard({ id, title, abstract, doi }: PaperCardProps) {
     <Card className="min-h-[400px] w-[600px]">
       <CardHeader>
         <CardTitle className="text-4xl">{title}</CardTitle>
+        <p className="text-muted-foreground text-sm">Paper ID: {id}</p>
       </CardHeader>
       <CardContent className="flex-1">
         <p>{abstract}</p>
