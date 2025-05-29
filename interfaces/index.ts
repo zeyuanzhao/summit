@@ -4,6 +4,6 @@ export interface PaperCardProps {
   authors?: string[];
   abstract: string;
   publishedDate?: string;
-  publisher?: string;
+  venue?: string;
   doi?: string;
 }
