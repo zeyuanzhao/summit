@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 
-export async function POST() {
+export async function GET() {
   const supabase = await createClient();
   const { data, error } = await supabase.from("paper").select("*").limit(5);
   if (error) {
