@@ -1,7 +1,9 @@
-import { updateSession } from "@/lib/supabase/middleware";
 import { type NextRequest } from "next/server";
 
+import { updateSession } from "@/lib/supabase/middleware";
+
 export async function middleware(request: NextRequest) {
+  // eslint-disable-next-line no-return-await
   return await updateSession(request);
 }
 
