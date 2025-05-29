@@ -7,3 +7,8 @@ export interface PaperCardProps {
   venue?: string;
   doi?: string;
 }
+
+export interface FeedStore {
+  feed: PaperCardProps[];
+  currentPage: number;
+}
