@@ -19,6 +19,17 @@ export default function Layout({
 
   useEffect(() => {
     const supabase = createClient();
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!session?.user) {
+          setUser(null);
+          router.push("/auth/login");
+        } else {
+          setUser(session.user);
+        }
+      },
+    );
+
     supabase.auth.getUser().then(({ data }) => {
       if (!data?.user) {
         router.push("/auth/login");
@@ -26,6 +37,10 @@ export default function Layout({
         setUser(data.user);
       }
     });
+
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
   }, [router]);
 
   return (
