@@ -29,9 +29,11 @@ export function PaperCard({
       </CardContent>
       <CardFooter className="flex flex-row justify-between">
         <Button variant="outline" asChild>
-          <Link href="/">View Paper</Link>
+          <Link href={`/paper/${id}`}>View Paper</Link>
         </Button>
-        <Link href="/">{doi}</Link>
+        <Link href={`https://doi.org/${doi}`} target="_blank">
+          {doi}
+        </Link>
       </CardFooter>
     </Card>
   );

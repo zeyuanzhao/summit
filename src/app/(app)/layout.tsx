@@ -20,21 +20,23 @@ export default function Layout({
   useEffect(() => {
     const supabase = createClient();
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (!session?.user) {
+      (event, session) => {
+        if (event === "SIGNED_OUT") {
           setUser(null);
           router.push("/auth/login");
-        } else {
+        } else if (session?.user) {
           setUser(session.user);
+        } else {
+          setUser(null);
         }
       },
     );
 
     supabase.auth.getUser().then(({ data }) => {
-      if (!data?.user) {
-        router.push("/auth/login");
-      } else {
+      if (data?.user) {
         setUser(data.user);
+      } else {
+        setUser(null);
       }
     });
 
