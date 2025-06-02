@@ -8,7 +8,7 @@ import { PaperCard } from "@/components/paper-card";
 import { useFeedStore } from "@/lib/stores/useFeedStore";
 
 export default function Page() {
-  const { feed, currentPage } = useFeedStore();
+  const { feed, currentPage, addToFeed } = useFeedStore();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -17,6 +17,7 @@ export default function Page() {
           const errorData = await data.json();
           throw new Error(errorData.error || "Failed to fetch feed data");
         }
+        addToFeed(await data.json());
       } catch (e) {
         toast.error(
           (e as Error).message || "An error occurred while fetching feed data",
@@ -24,7 +25,7 @@ export default function Page() {
       }
     };
     fetchData();
-  }, [currentPage]);
+  }, [addToFeed, currentPage]);
 
   return (
     <div className="flex h-screen flex-1 flex-row items-center justify-center gap-40">
