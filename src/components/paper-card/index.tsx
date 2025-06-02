@@ -11,9 +11,15 @@ import {
   CardTitle,
 } from "../ui/card";
 
-export function PaperCard({ id, title, abstract, doi }: PaperCardProps) {
+export function PaperCard({
+  id,
+  title,
+  abstract,
+  doi,
+  className,
+}: PaperCardProps & { className?: string }) {
   return (
-    <Card className="min-h-[400px] w-[600px]">
+    <Card className={`${className}`}>
       <CardHeader>
         <CardTitle className="text-4xl">{title}</CardTitle>
         <p className="text-muted-foreground text-sm">Paper ID: {id}</p>
