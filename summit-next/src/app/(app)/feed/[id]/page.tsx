@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { FeedSidebar } from "@/components/feed-sidebar";
 import { PaperCard } from "@/components/paper-card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useFeedStore } from "@/lib/stores/useFeedStore";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -37,6 +38,9 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   return (
     <div className="flex h-screen flex-1 flex-row items-center justify-center gap-40">
       <div className="no-scrollbar flex h-screen flex-col items-center gap-y-8 overflow-auto p-6">
+        {feed.length === 0 && (
+          <Skeleton className="min-h-[400px] w-[600px] flex-shrink-0 overflow-hidden" />
+        )}
         {feed.map((paper) => (
           <PaperCard
             key={paper.id}
