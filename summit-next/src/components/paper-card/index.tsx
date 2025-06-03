@@ -24,7 +24,7 @@ export function PaperCard({
         <CardTitle className="text-4xl">{title}</CardTitle>
         <p className="text-muted-foreground text-sm">Paper ID: {id}</p>
       </CardHeader>
-      <CardContent className="flex-1">
+      <CardContent className="flex-1 overflow-auto">
         <p>{abstract}</p>
       </CardContent>
       <CardFooter className="flex flex-row justify-between">

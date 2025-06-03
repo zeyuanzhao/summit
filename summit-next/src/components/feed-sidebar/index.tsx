@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 
 export function FeedSidebar() {
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2 pr-32">
       <Button variant="outline" size="icon">
         <HiOutlineHeart />
       </Button>

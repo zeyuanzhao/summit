@@ -36,15 +36,15 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   }, []);
 
   return (
-    <div className="flex h-screen flex-1 flex-row items-center justify-center gap-40">
-      <div className="no-scrollbar flex h-screen flex-col items-center gap-y-8 overflow-auto p-6">
+    <div className="flex h-screen flex-1 flex-row items-center justify-center">
+      <div className="no-scrollbar flex h-screen w-full flex-col items-center gap-y-8 overflow-auto p-6">
         {feed.length === 0 && (
           <Skeleton className="min-h-[400px] w-[600px] flex-shrink-0 overflow-hidden" />
         )}
         {feed.map((paper) => (
           <PaperCard
             key={paper.id}
-            className="min-h-[400px] w-[600px] flex-shrink-0 overflow-hidden"
+            className="max-h-[calc(100vh-100px)] min-h-[400px] w-[600px] flex-shrink-0 overflow-hidden"
             {...paper}
           />
         ))}
