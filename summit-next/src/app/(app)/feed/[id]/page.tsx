@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect } from "react";
+import { use, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 import { FeedSidebar } from "@/components/feed-sidebar";
@@ -9,8 +9,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useFeedStore } from "@/lib/stores/useFeedStore";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
-  const { feed, addToFeed, initialized, setInitialized } = useFeedStore();
+  const {
+    feed,
+    addToFeed,
+    initialized,
+    setInitialized,
+    setCurrentPage,
+    incrementPage,
+    decrementPage,
+  } = useFeedStore();
   const { id } = use(params);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (initialized || !id) return;
     const fetchData = async () => {
@@ -35,9 +45,36 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleIncrement = () => {
+    incrementPage();
+    const container = containerRef.current;
+    if (container) {
+      const snapHeight = container.offsetHeight;
+      container.scrollTo({
+        top: container.scrollTop - snapHeight,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleDecrement = () => {
+    decrementPage();
+    const container = containerRef.current;
+    if (container) {
+      const snapHeight = container.offsetHeight;
+      container.scrollTo({
+        top: container.scrollTop + snapHeight,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div className="flex h-screen flex-1 flex-row items-center justify-center">
-      <div className="no-scrollbar flex h-screen w-full snap-y snap-mandatory flex-col items-center gap-y-8 overflow-auto p-6">
+      <div
+        ref={containerRef}
+        className="no-scrollbar flex h-screen w-full snap-y snap-mandatory flex-col items-center gap-y-8 overflow-auto p-6"
+      >
         {feed.length === 0 && (
           <Skeleton className="min-h-[400px] w-[600px] flex-shrink-0 overflow-hidden" />
         )}
@@ -49,7 +86,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
           />
         ))}
       </div>
-      <FeedSidebar />
+      <FeedSidebar
+        onIncrement={handleIncrement}
+        onDecrement={handleDecrement}
+      />
     </div>
   );
 }
