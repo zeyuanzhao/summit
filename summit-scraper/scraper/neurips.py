@@ -26,7 +26,7 @@ def get_neurips_paper(paper_url: str, year: str) -> dict:
     
     return paper
 
-def get_neurips_year(year: str) -> list:
+def get_neurips_year(year: str, process = None) -> list:
     url = f"{PROCEEDINGS_BASE_URL}/{year}"
     res = requests.get(url, timeout=10)
     if res.status_code != 200:
@@ -43,11 +43,13 @@ def get_neurips_year(year: str) -> list:
             if paper:
                 papers.append(paper)
                 print(f"{i}: {year} - {paper['title']}")
+                if process and len(papers) % 20 == 0:
+                    process(papers[-20:])
         except ValueError as e:
             print(e)
     return papers
 
-def get_neurips_all(process: function) -> list:
+def get_neurips_all(process = None) -> list:
     all_papers = []
     for year in YEARS:
         papers = get_neurips_year(year, process)
@@ -55,5 +57,8 @@ def get_neurips_all(process: function) -> list:
     return all_papers
 
 if __name__ == "__main__":
-    all_papers = get_neurips_all()
+    def dummy_process(batch):
+        print(f"Processing batch of {len(batch)} papers")
+
+    all_papers = get_neurips_all(dummy_process)
     print(f"Total papers fetched: {len(all_papers)}")
