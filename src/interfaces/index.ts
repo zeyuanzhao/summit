@@ -11,9 +11,11 @@ export interface PaperCardProps {
 export interface FeedStore {
   feed: PaperCardProps[];
   currentPage: number;
+  initialized: boolean;
   setFeed: (newFeed: PaperCardProps[]) => void;
   addToFeed: (newPapers: PaperCardProps[]) => void;
   setCurrentPage: (page: number) => void;
   incrementPage: () => void;
   decrementPage: () => void;
+  setInitialized: (initialized: boolean) => void;
 }
