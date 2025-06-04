@@ -31,7 +31,6 @@ export default function Page() {
       try {
         const url = new URL("/feed/fetch", window.location.origin);
         url.searchParams.append("limit", "4");
-        // debugger;
         const data = await fetch(url.toString());
         if (!data.ok) {
           const error = await data.json();
@@ -80,6 +79,28 @@ export default function Page() {
       });
     }
   }, [currentPage]);
+
+  useEffect(() => {
+    const { length } = feed;
+    if (length - currentPage < 2) {
+      const fetchMore = async () => {
+        try {
+          const url = new URL("/feed/fetch", window.location.origin);
+          url.searchParams.append("limit", "4");
+          const data = await fetch(url.toString());
+          if (!data.ok) {
+            const error = await data.json();
+            throw new Error(error.message || "Failed to fetch more feed");
+          }
+          const jsonData = await data.json();
+          addToFeed(jsonData);
+        } catch (error) {
+          toast.error((error as Error).message || "Failed to fetch more feed");
+        }
+      };
+      fetchMore();
+    }
+  }, [addToFeed, currentPage, feed]);
 
   useEffect(() => {
     if (!hasNavigatedBack.current) {
