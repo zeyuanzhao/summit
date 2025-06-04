@@ -5,8 +5,8 @@ export async function getRecommendations(userId?: string, limit: number = 10) {
   const { data, error } = await supabase
     .from("paper")
     .select("*")
-    .order("title", { ascending: true })
-    .limit(limit * 2);
+    .order("title", { ascending: true });
+  // .limit(limit * 2);
   if (error) {
     throw new Error(`Failed to fetch recommendations: ${error.message}`);
   }
