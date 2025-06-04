@@ -9,7 +9,6 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get("limit") || "4", 10);
   const supabase = await createClient();
   const { user } = (await supabase.auth.getUser()).data;
-  const remain = limit - ids.length;
   const { data: recommendations, error } = await supabase
     .from("paper")
     .select("*")
@@ -21,6 +20,7 @@ export async function GET(request: NextRequest) {
       headers: { "Content-Type": "application/json" },
     });
   }
+  const remain = limit - recommendations.length;
   if (remain > 0) {
     const moreIds = await getRecommendations(user?.id, remain);
     const { data: moreRecommendations, error: moreError } = await supabase
