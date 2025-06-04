@@ -185,7 +185,6 @@ export default function Page() {
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
       />
-      <p>{`${currentPage}, ${feed.length}`}</p>
     </div>
   );
 }
