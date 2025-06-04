@@ -69,6 +69,7 @@ const eslintConfig = [
           ],
         },
       ],
+      allowForLoopAfterthoughts: true,
     },
   },
 ];

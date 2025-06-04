@@ -20,6 +20,7 @@ export default function Page() {
     currentPage,
   } = useFeedStore();
   const containerRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<HTMLDivElement[]>([]);
   const hasNavigatedBack = useRef(false);
 
   useEffect(() => {
@@ -53,11 +54,22 @@ export default function Page() {
     if (!container) return;
 
     const handleScroll = () => {
-      const snapHeight = container.offsetHeight;
-      const page = Math.round(container.scrollTop / snapHeight);
-      if (page !== currentPage) {
-        setCurrentPage(page);
-        window.history.pushState(null, "", `/feed/${feed[page]?.id || ""}`);
+      let cumulativeHeight = 0;
+      const { scrollTop } = container;
+
+      for (let i = 0; i < cardRefs.current.length; i++) {
+        const card = cardRefs.current[i];
+        if (!card) continue;
+
+        cumulativeHeight += card.offsetHeight;
+
+        if (scrollTop < cumulativeHeight) {
+          if (i !== currentPage) {
+            setCurrentPage(i);
+            window.history.pushState(null, "", `/feed/${feed[i]?.id || ""}`);
+          }
+          break;
+        }
       }
     };
 
@@ -72,9 +84,15 @@ export default function Page() {
     if (hasNavigatedBack.current) return;
     const container = containerRef.current;
     if (container) {
-      const snapHeight = container.offsetHeight;
+      let cumulativeHeight = 0;
+      for (let i = 0; i < currentPage; i++) {
+        const card = cardRefs.current[i];
+        if (card) {
+          cumulativeHeight += card.offsetHeight;
+        }
+      }
       container.scrollTo({
-        top: currentPage * snapHeight,
+        top: cumulativeHeight,
         behavior: "auto",
       });
     }
@@ -112,13 +130,17 @@ export default function Page() {
     incrementPage();
     const container = containerRef.current;
     if (container) {
-      const snapHeight = container.offsetHeight;
+      let cumulativeHeight = 0;
+      for (let i = 0; i < currentPage; i++) {
+        const card = cardRefs.current[i];
+        if (card) {
+          cumulativeHeight += card.offsetHeight;
+        }
+      }
       container.scrollTo({
-        top: container.scrollTop - snapHeight,
+        top: cumulativeHeight,
         behavior: "smooth",
       });
-      const page = Math.round(container.scrollTop / snapHeight) - 1;
-      setCurrentPage(page);
     }
   };
 
@@ -126,13 +148,17 @@ export default function Page() {
     decrementPage();
     const container = containerRef.current;
     if (container) {
-      const snapHeight = container.offsetHeight;
+      let cumulativeHeight = 0;
+      for (let i = 0; i < currentPage; i++) {
+        const card = cardRefs.current[i];
+        if (card) {
+          cumulativeHeight += card.offsetHeight;
+        }
+      }
       container.scrollTo({
-        top: container.scrollTop + snapHeight,
+        top: cumulativeHeight,
         behavior: "smooth",
       });
-      const page = Math.round(container.scrollTop / snapHeight) + 1;
-      setCurrentPage(page);
     }
   };
 
@@ -149,6 +175,9 @@ export default function Page() {
           <PaperCard
             // eslint-disable-next-line react/no-array-index-key
             key={`${paper.id}-${i}`}
+            ref={(el) => {
+              cardRefs.current[i] = el!;
+            }}
             className="max-h-[calc(100vh-95px)] min-h-[400px] w-[600px] flex-shrink-0 snap-center snap-always overflow-hidden"
             {...paper}
           />
@@ -158,6 +187,7 @@ export default function Page() {
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
       />
+      <p>{`${currentPage}, ${feed.length}`}</p>
     </div>
   );
 }

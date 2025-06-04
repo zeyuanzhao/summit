@@ -17,9 +17,10 @@ export function PaperCard({
   abstract,
   doi,
   className,
-}: PaperCardProps & { className?: string }) {
+  ref,
+}: PaperCardProps & { className?: string; ref?: React.Ref<HTMLDivElement> }) {
   return (
-    <Card className={`${className}`}>
+    <Card className={`${className}`} ref={ref}>
       <CardHeader>
         <CardTitle className="text-4xl">{title}</CardTitle>
         <p className="text-muted-foreground text-sm">Paper ID: {id}</p>
