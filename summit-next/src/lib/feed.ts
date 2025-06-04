@@ -1,8 +1,20 @@
-export async function getRecommendations(userId?: string, limit: number = 10) {
-  const TEMP_RECS = [
-    "f0cb5eaa-e399-4c95-aad6-c2b08e472538",
-    "d234b4ed-9ab5-4017-a840-60f089868dd5",
-  ];
+import { createClient } from "./supabase/server";
 
-  return TEMP_RECS.slice(0, limit);
+export async function getRecommendations(userId?: string, limit: number = 10) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("paper")
+    .select("*")
+    .order("title", { ascending: true })
+    .limit(limit * 2);
+  if (error) {
+    throw new Error(`Failed to fetch recommendations: ${error.message}`);
+  }
+  if (!data || data.length === 0) {
+    throw new Error("No recommendations found");
+  }
+  return data
+    .sort(() => Math.random())
+    .slice(0, limit)
+    .map((paper) => paper.id);
 }

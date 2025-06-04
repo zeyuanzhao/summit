@@ -137,7 +137,6 @@ export default function Page() {
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
       />
-      <h1>{`${hasNavigatedBack.current}`}</h1>
     </div>
   );
 }
