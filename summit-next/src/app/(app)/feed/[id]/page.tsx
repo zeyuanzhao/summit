@@ -17,6 +17,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     setCurrentPage,
     incrementPage,
     decrementPage,
+    currentPage,
   } = useFeedStore();
   const { id } = use(params);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -51,9 +52,11 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 
     const handleScroll = () => {
       const snapHeight = container.offsetHeight;
-      const currentPage = Math.round(container.scrollTop / snapHeight);
-      setCurrentPage(currentPage);
-      console.log("Current page:", currentPage);
+      const page = Math.round(container.scrollTop / snapHeight);
+      if (page !== currentPage) {
+        setCurrentPage(page);
+        window.history.pushState(null, "", `/feed/${feed[page]?.id || ""}`);
+      }
     };
 
     container.addEventListener("scroll", handleScroll);
@@ -61,7 +64,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     return () => {
       container.removeEventListener("scroll", handleScroll);
     };
-  }, [setCurrentPage]);
+  }, [setCurrentPage, feed, currentPage]);
 
   const handleIncrement = () => {
     incrementPage();
@@ -72,8 +75,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         top: container.scrollTop - snapHeight,
         behavior: "smooth",
       });
-      const currentPage = Math.round(container.scrollTop / snapHeight) - 1;
-      setCurrentPage(currentPage);
+      const page = Math.round(container.scrollTop / snapHeight) - 1;
+      setCurrentPage(page);
     }
   };
 
@@ -86,8 +89,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         top: container.scrollTop + snapHeight,
         behavior: "smooth",
       });
-      const currentPage = Math.round(container.scrollTop / snapHeight) + 1;
-      setCurrentPage(currentPage);
+      const page = Math.round(container.scrollTop / snapHeight) + 1;
+      setCurrentPage(page);
     }
   };
 
