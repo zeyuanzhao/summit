@@ -15,8 +15,6 @@ export default function Page() {
     initialized,
     setInitialized,
     setCurrentPage,
-    incrementPage,
-    decrementPage,
     currentPage,
   } = useFeedStore();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -127,11 +125,11 @@ export default function Page() {
   }, []);
 
   const handleIncrement = () => {
-    incrementPage();
+    debugger;
     const container = containerRef.current;
     if (container) {
       let cumulativeHeight = 0;
-      for (let i = 0; i < currentPage; i++) {
+      for (let i = 0; i < currentPage + 1; i++) {
         const card = cardRefs.current[i];
         if (card) {
           cumulativeHeight += card.offsetHeight;
@@ -145,11 +143,11 @@ export default function Page() {
   };
 
   const handleDecrement = () => {
-    decrementPage();
+    debugger;
     const container = containerRef.current;
     if (container) {
       let cumulativeHeight = 0;
-      for (let i = 0; i < currentPage; i++) {
+      for (let i = 0; i < currentPage - 1; i++) {
         const card = cardRefs.current[i];
         if (card) {
           cumulativeHeight += card.offsetHeight;

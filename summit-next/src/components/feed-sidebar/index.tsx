@@ -22,10 +22,10 @@ export function FeedSidebar({
       <Button variant="outline" size="icon">
         <HiOutlineBookmark />
       </Button>
-      <Button variant="outline" size="icon" onClick={onIncrement}>
+      <Button variant="outline" size="icon" onClick={onDecrement}>
         <HiArrowUp />
       </Button>
-      <Button variant="outline" size="icon" onClick={onDecrement}>
+      <Button variant="outline" size="icon" onClick={onIncrement}>
         <HiArrowDown />
       </Button>
     </div>
