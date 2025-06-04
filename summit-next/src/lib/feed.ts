@@ -13,8 +13,6 @@ export async function getRecommendations(userId?: string, limit: number = 10) {
   if (!data || data.length === 0) {
     throw new Error("No recommendations found");
   }
-  return data
-    .sort(() => Math.random())
-    .slice(0, limit)
-    .map((paper) => paper.id);
+  const shuffled = data.sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, limit).map((paper) => paper.id);
 }
