@@ -18,7 +18,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         const url = new URL("/feed/fetch", window.location.origin);
         url.searchParams.append("limit", "4");
         url.searchParams.append("ids", id as string);
-        debugger;
         const data = await fetch(url.toString());
         if (!data.ok) {
           const error = await data.json();

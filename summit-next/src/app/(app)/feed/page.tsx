@@ -20,6 +20,7 @@ export default function Page() {
     currentPage,
   } = useFeedStore();
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasNavigatedBack = useRef(false);
 
   useEffect(() => {
     const fetchFeed = async () => {
@@ -30,7 +31,7 @@ export default function Page() {
       try {
         const url = new URL("/feed/fetch", window.location.origin);
         url.searchParams.append("limit", "4");
-        debugger;
+        // debugger;
         const data = await fetch(url.toString());
         if (!data.ok) {
           const error = await data.json();
@@ -67,6 +68,24 @@ export default function Page() {
       container.removeEventListener("scroll", handleScroll);
     };
   }, [setCurrentPage, feed, currentPage]);
+
+  useEffect(() => {
+    if (hasNavigatedBack.current) return;
+    const container = containerRef.current;
+    if (container) {
+      const snapHeight = container.offsetHeight;
+      container.scrollTo({
+        top: currentPage * snapHeight,
+        behavior: "auto",
+      });
+    }
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (!hasNavigatedBack.current) {
+      hasNavigatedBack.current = true;
+    }
+  }, []);
 
   const handleIncrement = () => {
     incrementPage();
@@ -118,6 +137,7 @@ export default function Page() {
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
       />
+      <h1>{`${hasNavigatedBack.current}`}</h1>
     </div>
   );
 }
