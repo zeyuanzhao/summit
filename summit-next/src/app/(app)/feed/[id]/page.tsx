@@ -45,6 +45,24 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const snapHeight = container.offsetHeight;
+      const currentPage = Math.round(container.scrollTop / snapHeight);
+      setCurrentPage(currentPage);
+      console.log("Current page:", currentPage);
+    };
+
+    container.addEventListener("scroll", handleScroll);
+    // eslint-disable-next-line consistent-return
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [setCurrentPage]);
+
   const handleIncrement = () => {
     incrementPage();
     const container = containerRef.current;
@@ -54,6 +72,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         top: container.scrollTop - snapHeight,
         behavior: "smooth",
       });
+      const currentPage = Math.round(container.scrollTop / snapHeight) - 1;
+      setCurrentPage(currentPage);
     }
   };
 
@@ -66,6 +86,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
         top: container.scrollTop + snapHeight,
         behavior: "smooth",
       });
+      const currentPage = Math.round(container.scrollTop / snapHeight) + 1;
+      setCurrentPage(currentPage);
     }
   };
 
