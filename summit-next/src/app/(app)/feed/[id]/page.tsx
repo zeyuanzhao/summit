@@ -95,15 +95,16 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     <div className="flex h-screen flex-1 flex-row items-center justify-center">
       <div
         ref={containerRef}
-        className="no-scrollbar flex h-screen w-full snap-y snap-mandatory flex-col items-center gap-y-8 overflow-auto p-6"
+        className="no-scrollbar flex h-screen w-full snap-y snap-mandatory flex-col items-center gap-y-4 overflow-auto p-6 pt-12"
       >
         {feed.length === 0 && (
-          <Skeleton className="min-h-[400px] w-[600px] flex-shrink-0 overflow-hidden" />
+          <Skeleton className="h-[400px] w-[600px] flex-shrink-0 overflow-hidden" />
         )}
-        {feed.map((paper) => (
+        {feed.map((paper, i) => (
           <PaperCard
-            key={paper.id}
-            className="max-h-[calc(100vh-100px)] min-h-[400px] w-[600px] flex-shrink-0 snap-center snap-always overflow-hidden"
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${paper.id}-${i}`}
+            className="max-h-[calc(100vh-95px)] min-h-[400px] w-[600px] flex-shrink-0 snap-center snap-always overflow-hidden"
             {...paper}
           />
         ))}
