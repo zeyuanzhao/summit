@@ -5,6 +5,7 @@
     "dotenv",
     "neurips",
     "parallelizable",
+    "Postgrest",
     "Sonner",
     "supabase",
     "Upserted",

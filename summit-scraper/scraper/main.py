@@ -47,12 +47,12 @@ def upsert_papers(papers: list) -> None:
                     res_paper = supabase.table("paper").upsert(paper, on_conflict="canonical_id").execute()
                     if res_paper.data:
                         paper_id_map[paper["title"]] = res_paper.data[0]["id"]
-                except PostgrestAPIError as e:
+                except PostgrestAPIError as e2:
                     res_paper_select = supabase.table("paper").select("id").eq("canonical_id", paper["canonical_id"]).execute()
                     paper_id_map[paper["title"]] = res_paper_select.data[0]["id"] if res_paper_select.data else None
                     if not paper_id_map[paper["title"]]:
                         print(f"Paper {paper['title']} not found in database, skipping.")
-                    print(f"Error upserting paper {paper['title']}: {e}")
+                    print(f"Error upserting paper {paper['title']}: {e2}")
 
         author_id_map = {}
         try:
@@ -68,12 +68,12 @@ def upsert_papers(papers: list) -> None:
                     res_author = supabase.table("author").upsert(author, on_conflict="name").execute()
                     if res_author.data:
                         author_id_map[author["name"]] = res_author.data[0]["id"]
-                except PostgrestAPIError as e:
+                except PostgrestAPIError as e2:
                     res_author_select = supabase.table("author").select("id").eq("name", author["name"]).execute()
                     author_id_map[author["name"]] = res_author_select.data[0]["id"] if res_author_select.data else None
                     if not author_id_map[author["name"]]:
                         print(f"Author {author['name']} not found in database, skipping.")
-                    print(f"Error upserting author {author['name']}: {e}")
+                    print(f"Error upserting author {author['name']}: {e2}")
 
         author_paper_relationships = []
         for paper in papers:
@@ -96,13 +96,13 @@ def upsert_papers(papers: list) -> None:
             for relationship in author_paper_relationships:
                 try:
                     supabase.table("author_paper").upsert(relationship, on_conflict="paper_id,author_id").execute()
-                except PostgrestAPIError as e:
-                    print(f"Error upserting relationship {relationship}: {e}")
+                except PostgrestAPIError as e2:
+                    print(f"Error upserting relationship {relationship}: {e2}")
 
         print(
             f"Upserted {len(paper_id_map)} papers, {len(author_id_map)} unique authors, and {len(author_paper_relationships)} relationships successfully."
         )
-    except Exception as e:
+    except (PostgrestAPIError, ValueError) as e:
         print(f"Unexpected error in upsert_papers: {e}")
 
 
