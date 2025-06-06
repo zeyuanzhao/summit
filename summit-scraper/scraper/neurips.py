@@ -1,5 +1,5 @@
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 
 YEARS = ["2024", "2023"]
 PROCEEDINGS_BASE_URL = "https://proceedings.neurips.cc/paper_files/paper"
@@ -7,13 +7,14 @@ PAPER_BASE_URL = "https://proceedings.neurips.cc"
 
 def get_neurips_paper(paper_url: str, year: str) -> dict:
     paper_res = requests.get(f"{PAPER_BASE_URL}{paper_url}", timeout=10)
-    if paper_res.status_code != 200: 
+    if paper_res.status_code != 200:
         raise ValueError(f"Failed to fetch paper {paper_url} for NeurIPS {year}")
     paper_soup = BeautifulSoup(paper_res.text, "html.parser")
 
     title = paper_soup.find("h4").text.strip()
     authors = paper_soup.find("h4", text="Authors").find_next("p").text.strip()
     abstract = paper_soup.find("h4", text="Abstract").find_next("p").text.strip()
+    hash = paper_url.split("/hash/")[-1].split("-")[0]
 
     paper = {
         "title": title,
@@ -22,8 +23,9 @@ def get_neurips_paper(paper_url: str, year: str) -> dict:
         "published_date": f"{year}-12-01",
         "url": f"{PAPER_BASE_URL}{paper_url}",
         "venue": "NeurIPS",
+        "canonical_id": f"neurips.{year}.{hash}",
     }
-    
+
     return paper
 
 def get_neurips_year(year: str, process = None) -> list:

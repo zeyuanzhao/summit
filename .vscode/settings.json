@@ -2,8 +2,27 @@
   "cSpell.words": [
     "BLEU",
     "convolutional",
+    "dotenv",
     "neurips",
     "parallelizable",
-    "Sonner"
+    "Sonner",
+    "supabase",
+    "Upserted",
+    "upserting"
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    
+  },
+  "isort.args": [
+    "--profile",
+    "black"
+  ],
+  "black-formatter.args": [
+    "--experimental-string-processing"
   ]
 }
