@@ -8,6 +8,12 @@ export interface PaperCardProps {
   doi?: string;
 }
 
+export interface ListCardProps {
+  id: string;
+  title: string;
+  description?: string;
+}
+
 export interface FeedStore {
   feed: PaperCardProps[];
   currentPage: number;

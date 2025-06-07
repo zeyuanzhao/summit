@@ -49,7 +49,7 @@ export default function Layout({
     <UserContext.Provider value={user}>
       <div className="flex h-screen w-screen flex-row">
         <Sidebar />
-        {children}
+        <div className="flex flex-1 flex-row">{children}</div>
       </div>
     </UserContext.Provider>
   );
