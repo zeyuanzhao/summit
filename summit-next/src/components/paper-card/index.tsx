@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { PaperCardProps } from "@/interfaces";
+import { Paper } from "@/interfaces";
 
 import { Button } from "../ui/button";
 import {
@@ -15,10 +15,10 @@ export function PaperCard({
   id,
   title,
   abstract,
-  doi,
+  canonical_id: doi,
   className,
   ref,
-}: PaperCardProps & { className?: string; ref?: React.Ref<HTMLDivElement> }) {
+}: Paper & { className?: string; ref?: React.Ref<HTMLDivElement> }) {
   return (
     <Card className={`${className}`} ref={ref}>
       <CardHeader>

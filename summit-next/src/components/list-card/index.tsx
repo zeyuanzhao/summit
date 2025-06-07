@@ -1,13 +1,15 @@
 import Link from "next/link";
+
+import { List } from "@/interfaces";
+
 import { Card, CardContent, CardHeader } from "../ui/card";
-import { ListCardProps } from "@/interfaces";
 
 export function ListCard({
   title,
   description,
   id,
   className = "",
-}: ListCardProps & { className?: string }) {
+}: List & { className?: string }) {
   return (
     <Link href={`/list/${id}`} className="no-underline">
       <Card className={className}>

@@ -1,7 +1,9 @@
 import { NextRequest } from "next/server";
+import { z } from "zod";
 
 import { getRecommendations } from "@/lib/feed";
 import { createClient } from "@/lib/supabase/server";
+import { paperSchema } from "@/lib/validation/paper";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -36,7 +38,19 @@ export async function GET(request: NextRequest) {
     }
     recommendations.push(...moreRecommendations);
   }
-  return new Response(JSON.stringify(recommendations), {
+  // validate recommendations with zod schema paperSchema
+  const zodPapers = z.array(paperSchema).safeParse(recommendations);
+  if (!zodPapers.success) {
+    console.error("Invalid paper data:", zodPapers.error);
+    return new Response(JSON.stringify({ error: "Invalid paper data." }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const parsedPapers = zodPapers.data;
+
+  return new Response(JSON.stringify(parsedPapers), {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });

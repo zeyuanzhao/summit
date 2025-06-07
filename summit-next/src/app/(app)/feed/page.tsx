@@ -125,7 +125,6 @@ export default function Page() {
   }, []);
 
   const handleIncrement = () => {
-    debugger;
     const container = containerRef.current;
     if (container) {
       let cumulativeHeight = 0;
@@ -143,7 +142,6 @@ export default function Page() {
   };
 
   const handleDecrement = () => {
-    debugger;
     const container = containerRef.current;
     if (container) {
       let cumulativeHeight = 0;

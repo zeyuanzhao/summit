@@ -1,25 +1,18 @@
-export interface PaperCardProps {
-  id: string;
-  title: string;
-  authors?: string[];
-  abstract: string;
-  publishedDate?: string;
-  venue?: string;
-  doi?: string;
-}
+import { z } from "zod";
 
-export interface ListCardProps {
-  id: string;
-  title: string;
-  description?: string;
-}
+import { listSchema } from "@/lib/validation/list";
+import { paperSchema } from "@/lib/validation/paper";
+
+export type Paper = z.infer<typeof paperSchema>;
+
+export type List = z.infer<typeof listSchema>;
 
 export interface FeedStore {
-  feed: PaperCardProps[];
+  feed: Paper[];
   currentPage: number;
   initialized: boolean;
-  setFeed: (newFeed: PaperCardProps[]) => void;
-  addToFeed: (newPapers: PaperCardProps[]) => void;
+  setFeed: (newFeed: Paper[]) => void;
+  addToFeed: (newPapers: Paper[]) => void;
   setCurrentPage: (page: number) => void;
   incrementPage: () => void;
   decrementPage: () => void;

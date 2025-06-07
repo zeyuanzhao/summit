@@ -69,7 +69,8 @@ const eslintConfig = [
           ],
         },
       ],
-      allowForLoopAfterthoughts: true,
+      "no-plusplus": ["error", { allowForLoopAfterthoughts: true }],
+      "no-continue": "off",
     },
   },
 ];
