@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { ListCardProps } from "@/interfaces";
 
-export default function ListCard({
+export function ListCard({
   title,
   description,
   id,
