@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
+import { UserContext } from "@/components/context/user-context";
 import { FeedSidebar } from "@/components/feed-sidebar";
 import { PaperCard } from "@/components/paper-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeedStore } from "@/lib/stores/useFeedStore";
+import { createClient } from "@/lib/supabase/client";
+import { eventSchema } from "@/lib/validation/event";
 
 export default function Page() {
   const {
@@ -16,10 +19,14 @@ export default function Page() {
     setInitialized,
     setCurrentPage,
     currentPage,
+    like,
+    unlike,
   } = useFeedStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<HTMLDivElement[]>([]);
   const hasNavigatedBack = useRef(false);
+  const supabase = createClient();
+  const user = useContext(UserContext);
 
   useEffect(() => {
     const fetchFeed = async () => {
@@ -158,6 +165,43 @@ export default function Page() {
     }
   };
 
+  const handleLike = async (paperId: string) => {
+    if (!user) {
+      toast.error("You must be logged in to like papers.");
+      return;
+    }
+
+    if (!paperId) {
+      toast.error("Invalid paper ID.");
+      return;
+    }
+
+    const event = eventSchema.safeParse({
+      user_id: user.id,
+      paper_id: paperId,
+      event_type: feed[currentPage]?.liked ? "unlike" : "like",
+      payload: {},
+    });
+
+    if (!event.success) {
+      toast.error("There was an error liking the paper.");
+      return;
+    }
+
+    const { error } = await supabase.from("event").insert(event.data);
+
+    if (error) {
+      toast.error("There was an error liking the paper.");
+      return;
+    }
+
+    if (feed[currentPage]?.liked) {
+      unlike();
+    } else {
+      like();
+    }
+  };
+
   return (
     <div className="flex h-screen flex-1 flex-row items-center justify-center">
       <div
@@ -182,6 +226,8 @@ export default function Page() {
       <FeedSidebar
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
+        handleLike={handleLike}
+        liked={feed[currentPage]?.liked || false}
       />
     </div>
   );

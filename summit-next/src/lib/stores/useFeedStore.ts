@@ -17,4 +17,26 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
     set((state) => ({ currentPage: Math.max(0, state.currentPage - 1) })),
   setInitialized: (initialized: boolean) =>
     set((state) => ({ ...state, initialized })),
+  like: () =>
+    set((state) => {
+      const updatedFeed = [...state.feed];
+      if (updatedFeed[state.currentPage]) {
+        updatedFeed[state.currentPage] = {
+          ...updatedFeed[state.currentPage],
+          liked: true,
+        };
+      }
+      return { feed: updatedFeed };
+    }),
+  unlike: () =>
+    set((state) => {
+      const updatedFeed = [...state.feed];
+      if (updatedFeed[state.currentPage]) {
+        updatedFeed[state.currentPage] = {
+          ...updatedFeed[state.currentPage],
+          liked: false,
+        };
+      }
+      return { feed: updatedFeed };
+    }),
 }));

@@ -26,4 +26,6 @@ export interface FeedStore {
   incrementPage: () => void;
   decrementPage: () => void;
   setInitialized: (initialized: boolean) => void;
+  like: () => void;
+  unlike: () => void;
 }
