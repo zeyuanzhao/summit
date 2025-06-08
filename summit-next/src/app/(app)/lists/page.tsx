@@ -27,7 +27,6 @@ export default async function Page() {
 
   const zodLists = z.array(listSchema).safeParse(lists);
   if (!zodLists.success) {
-    console.error("Invalid list data:", zodLists.error);
     return <ErrorMessage title="Error" error="Invalid list data." />;
   }
 

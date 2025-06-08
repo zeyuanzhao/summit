@@ -38,10 +38,9 @@ export async function GET(request: NextRequest) {
     }
     recommendations.push(...moreRecommendations);
   }
-  // validate recommendations with zod schema paperSchema
+
   const zodPapers = z.array(paperSchema).safeParse(recommendations);
   if (!zodPapers.success) {
-    console.error("Invalid paper data:", zodPapers.error);
     return new Response(JSON.stringify({ error: "Invalid paper data." }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
