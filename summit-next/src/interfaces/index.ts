@@ -29,3 +29,11 @@ export interface FeedStore {
   like: () => void;
   unlike: () => void;
 }
+
+export interface ListStore {
+  lists: List[];
+  setLists: (newLists: List[]) => void;
+  addToLists: (newLists: List[]) => void;
+  removeFromLists: (listId: string) => void;
+  updateList: (listId: string, updatedList: Partial<List>) => void;
+}
