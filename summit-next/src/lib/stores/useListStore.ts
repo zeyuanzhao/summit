@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { create } from "zustand";
 
 import { List, ListStore } from "@/interfaces";
@@ -8,6 +9,8 @@ const supabase = createClient();
 
 export const useListStore = create<ListStore>()((set, get) => ({
   lists: [],
+  initialized: false,
+  setInitialized: (initialized: boolean) => set({ initialized }),
   setLists: (newLists: List[]) => set({ lists: newLists }),
   addToLists: (newLists: List[]) => {
     const currentLists = get().lists;
@@ -23,16 +26,28 @@ export const useListStore = create<ListStore>()((set, get) => ({
         list.id === listId ? { ...list, ...updatedList } : list,
       ),
     })),
-  getLists: async () => {
+  getLists: async (userId: string | null) => {
+    if (!userId) {
+      toast.error("You must be logged in to get lists.");
+      return [];
+    }
     const { lists } = get();
-    if (lists.length > 0) return lists;
-    await get().fetchLists();
+    if (get().initialized) return lists;
+    await get().fetchLists(userId);
     return get().lists;
   },
-  fetchLists: async () => {
-    const { data } = await supabase.from("lists").select("*");
+  fetchLists: async (userId: string | null) => {
+    if (!userId) {
+      toast.error("You must be logged in to fetch lists.");
+      return;
+    }
+    const { data } = await supabase
+      .from("list")
+      .select("*")
+      .eq("user_id", userId);
     if (data) {
       set({ lists: data });
     }
+    get().setInitialized(true);
   },
 }));

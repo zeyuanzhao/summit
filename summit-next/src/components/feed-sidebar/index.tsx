@@ -1,9 +1,4 @@
-import {
-  HiArrowDown,
-  HiArrowUp,
-  HiOutlineBookmark,
-  HiOutlineHeart,
-} from "react-icons/hi2";
+import { HiArrowDown, HiArrowUp, HiOutlineHeart } from "react-icons/hi2";
 
 import { useFeedStore } from "@/lib/stores/useFeedStore";
 

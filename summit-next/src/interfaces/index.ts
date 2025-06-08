@@ -33,10 +33,12 @@ export interface FeedStore {
 
 export interface ListStore {
   lists: List[];
+  initialized: boolean;
+  setInitialized: (initialized: boolean) => void;
   setLists: (newLists: List[]) => void;
   addToLists: (newLists: List[]) => void;
   removeFromLists: (listId: string) => void;
   updateList: (listId: string, updatedList: Partial<List>) => void;
-  getLists: () => Promise<List[]>;
-  fetchLists: () => Promise<void>;
+  getLists: (userId: string | null) => Promise<List[]>;
+  fetchLists: (userId: string | null) => Promise<void>;
 }
