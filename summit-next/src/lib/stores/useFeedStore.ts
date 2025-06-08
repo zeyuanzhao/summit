@@ -33,11 +33,14 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
       return { feed: updatedFeed };
     });
   },
-  fetchInitialFeed: async (limit = 4) => {
+  fetchInitialFeed: async (limit = 4, id = "") => {
     if (get().initialized) return;
     try {
       const url = new URL("/feed/fetch", window.location.origin);
       url.searchParams.append("limit", limit.toString());
+      if (id) {
+        url.searchParams.append("ids", id);
+      }
       const res = await fetch(url.toString());
       if (!res.ok) {
         const err = await res.json();

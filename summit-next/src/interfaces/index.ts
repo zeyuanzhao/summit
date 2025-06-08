@@ -26,7 +26,7 @@ export interface FeedStore {
   decrementPage: () => void;
   setInitialized: (initialized: boolean) => void;
   toggleLikePaper: () => void;
-  fetchInitialFeed: (limit?: number) => Promise<void>;
+  fetchInitialFeed: (limit?: number, id?: string) => Promise<void>;
   fetchMoreFeed: (limit?: number) => Promise<void>;
   likePaper: (userId: string | null) => Promise<void>;
 }
