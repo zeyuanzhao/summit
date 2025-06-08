@@ -1,3 +1,4 @@
+import camelcaseKeys from "camelcase-keys";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -25,7 +26,7 @@ export default async function Page() {
     return <ErrorMessage title="Error" error="Failed to fetch lists." />;
   }
 
-  const zodLists = z.array(listSchema).safeParse(lists);
+  const zodLists = z.array(listSchema).safeParse(camelcaseKeys(lists));
   if (!zodLists.success) {
     return <ErrorMessage title="Error" error="Invalid list data." />;
   }

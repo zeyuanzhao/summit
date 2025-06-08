@@ -34,6 +34,7 @@ const eslintConfig = [
         { type: "app", pattern: "app/*" },
         { type: "components", pattern: "components/*" },
         { type: "lib", pattern: "lib/*" },
+        { type: "interfaces", pattern: "interfaces/*" },
       ],
     },
     rules: {
@@ -64,8 +65,9 @@ const eslintConfig = [
         {
           default: "disallow",
           rules: [
-            { from: "app", allow: ["components", "lib"] },
-            { from: "components", allow: ["components", "lib"] },
+            { from: "app", allow: ["components", "lib", "interfaces"] },
+            { from: "components", allow: ["components", "lib", "interfaces"] },
+            { from: "lib", allow: ["lib", "interfaces"] },
           ],
         },
       ],

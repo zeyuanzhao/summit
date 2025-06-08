@@ -26,8 +26,10 @@ export interface FeedStore {
   incrementPage: () => void;
   decrementPage: () => void;
   setInitialized: (initialized: boolean) => void;
-  like: () => void;
-  unlike: () => void;
+  toggleLikePaper: () => void;
+  fetchInitialFeed: (limit?: number) => Promise<void>;
+  fetchMoreFeed: (limit?: number) => Promise<void>;
+  likePaper: (userId: string | null) => Promise<void>;
 }
 
 export interface ListStore {
