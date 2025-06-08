@@ -7,6 +7,7 @@ import {
 
 import { useFeedStore } from "@/lib/stores/useFeedStore";
 
+import { SavePaperMenu } from "../save-paper-menu";
 import { Button } from "../ui/button";
 
 export function FeedSidebar({
@@ -34,9 +35,7 @@ export function FeedSidebar({
           fill={liked ? "red" : "none"}
         />
       </Button>
-      <Button variant="outline" size="icon">
-        <HiOutlineBookmark />
-      </Button>
+      <SavePaperMenu />
       <Button variant="outline" size="icon" onClick={onDecrement}>
         <HiArrowUp />
       </Button>
