@@ -15,7 +15,7 @@ export function PaperCard({
   id,
   title,
   abstract,
-  canonical_id: doi,
+  canonicalId: doi,
   className,
   ref,
 }: Paper & { className?: string; ref?: React.Ref<HTMLDivElement> }) {

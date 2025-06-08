@@ -29,7 +29,10 @@ export function FeedSidebar({
         size="icon"
         onClick={() => handleLike(feed[currentPage].id as string)}
       >
-        <HiOutlineHeart className={liked ? "text-red-500" : ""} />
+        <HiOutlineHeart
+          color={liked ? "red" : "currentColor"}
+          fill={liked ? "red" : "none"}
+        />
       </Button>
       <Button variant="outline" size="icon">
         <HiOutlineBookmark />

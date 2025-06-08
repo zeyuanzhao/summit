@@ -1,3 +1,4 @@
+import camelcaseKeys from "camelcase-keys";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -71,7 +72,7 @@ export async function GET(request: NextRequest) {
     papers.push(...morePapers);
   }
 
-  const zodPapers = z.array(paperSchema).safeParse(papers);
+  const zodPapers = z.array(paperSchema).safeParse(camelcaseKeys(papers));
   if (!zodPapers.success) {
     return new Response(JSON.stringify({ error: zodPapers.error.message }), {
       status: 500,
@@ -89,7 +90,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const zodLikes = z.array(eventSchema).safeParse(likes);
+  const zodLikes = z.array(eventSchema).safeParse(camelcaseKeys(likes));
   if (!zodLikes.success) {
     return new Response(JSON.stringify({ error: "Invalid like data." }), {
       status: 500,
@@ -107,7 +108,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const zodSaves = z.array(eventSchema).safeParse(saves);
+  const zodSaves = z.array(eventSchema).safeParse(camelcaseKeys(saves));
   if (!zodSaves.success) {
     return new Response(JSON.stringify({ error: "Invalid save data." }), {
       status: 500,
@@ -118,10 +119,10 @@ export async function GET(request: NextRequest) {
   const parsedSaves = zodSaves.data;
 
   const likesMap = new Map(
-    parsedLikes.map((like) => [like.paper_id, like.event_type === "like"]),
+    parsedLikes.map((like) => [like.paperId, like.eventType === "like"]),
   );
   const savesMap = new Map(
-    parsedSaves.map((save) => [save.paper_id, save.event_type === "save"]),
+    parsedSaves.map((save) => [save.paperId, save.eventType === "save"]),
   );
 
   const papersWithState = parsedPapers.map((paper) => ({

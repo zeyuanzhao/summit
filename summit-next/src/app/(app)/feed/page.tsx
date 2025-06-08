@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, useEffect, useRef } from "react";
+import snakecaseKeys from "snakecase-keys";
 import { toast } from "sonner";
 
 import { UserContext } from "@/components/context/user-context";
@@ -177,9 +178,9 @@ export default function Page() {
     }
 
     const event = eventSchema.safeParse({
-      user_id: user.id,
-      paper_id: paperId,
-      event_type: feed[currentPage]?.liked ? "unlike" : "like",
+      userId: user.id,
+      paperId,
+      eventType: feed[currentPage]?.liked ? "unlike" : "like",
       payload: {},
     });
 
@@ -188,7 +189,9 @@ export default function Page() {
       return;
     }
 
-    const { error } = await supabase.from("event").insert(event.data);
+    const { error } = await supabase
+      .from("event")
+      .insert(snakecaseKeys(event.data));
 
     if (error) {
       toast.error("There was an error liking the paper.");
