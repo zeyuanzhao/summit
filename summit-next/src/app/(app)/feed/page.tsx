@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
+
+import { UserContext } from "@/components/context/user-context";
 import { FeedSidebar } from "@/components/feed-sidebar";
 import { PaperCard } from "@/components/paper-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFeedStore } from "@/lib/stores/useFeedStore";
-import { UserContext } from "@/components/context/user-context";
 
 export default function Page() {
   const {

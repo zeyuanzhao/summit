@@ -33,17 +33,24 @@ export async function GET(request: NextRequest) {
 
   const allIds = [...ids, ...moreIds];
 
-  const likePromise = supabase
-    .from("latest_like")
-    .select("*")
-    .eq("user_id", user?.id)
-    .in("paper_id", allIds);
+  let likePromise;
+  let savePromise;
+  if (allIds.length === 0 || !user?.id) {
+    likePromise = Promise.resolve({ data: [], error: null });
+    savePromise = Promise.resolve({ data: [], error: null });
+  } else {
+    likePromise = supabase
+      .from("latest_like")
+      .select("*")
+      .eq("user_id", user?.id)
+      .in("paper_id", allIds);
 
-  const savePromise = supabase
-    .from("latest_save")
-    .select("*")
-    .eq("user_id", user?.id)
-    .in("paper_id", allIds);
+    savePromise = supabase
+      .from("latest_save")
+      .select("*")
+      .eq("user_id", user?.id)
+      .in("paper_id", allIds);
+  }
 
   const [papersResult, morePapersResult, likesResult, savesResult] =
     await Promise.all([
