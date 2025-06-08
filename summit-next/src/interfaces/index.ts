@@ -10,6 +10,13 @@ export type List = z.infer<typeof listSchema>;
 
 export type Event = z.infer<typeof eventSchema>;
 
+export interface PaperUserData {
+  paperId: string;
+  liked: boolean;
+  lists: string[];
+  read: boolean;
+}
+
 export interface FeedStore {
   feed: Paper[];
   currentPage: number;
