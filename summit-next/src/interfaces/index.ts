@@ -37,4 +37,6 @@ export interface ListStore {
   addToLists: (newLists: List[]) => void;
   removeFromLists: (listId: string) => void;
   updateList: (listId: string, updatedList: Partial<List>) => void;
+  getLists: () => Promise<List[]>;
+  fetchLists: () => Promise<void>;
 }
