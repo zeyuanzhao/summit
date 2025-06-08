@@ -13,16 +13,15 @@ export type Event = z.infer<typeof eventSchema>;
 export interface PaperUserData {
   paperId: string;
   liked: boolean;
-  lists: string[];
-  read: boolean;
+  saved: boolean;
 }
 
 export interface FeedStore {
-  feed: Paper[];
+  feed: (Paper & PaperUserData)[];
   currentPage: number;
   initialized: boolean;
-  setFeed: (newFeed: Paper[]) => void;
-  addToFeed: (newPapers: Paper[]) => void;
+  setFeed: (newFeed: (Paper & PaperUserData)[]) => void;
+  addToFeed: (newPapers: (Paper & PaperUserData)[]) => void;
   setCurrentPage: (page: number) => void;
   incrementPage: () => void;
   decrementPage: () => void;

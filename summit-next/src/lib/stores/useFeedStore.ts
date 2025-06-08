@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
-import { FeedStore, Paper } from "@/interfaces";
+import { FeedStore, Paper, PaperUserData } from "@/interfaces";
 
 export const useFeedStore = create<FeedStore>()((set, get) => ({
   feed: [],
   currentPage: 0,
   initialized: false,
-  setFeed: (newFeed: Paper[]) => set({ feed: newFeed }),
-  addToFeed: (newPapers: Paper[]) => {
+  setFeed: (newFeed: (Paper & PaperUserData)[]) => set({ feed: newFeed }),
+  addToFeed: (newPapers: (Paper & PaperUserData)[]) => {
     const currentFeed = get().feed;
     set({ feed: [...currentFeed, ...newPapers] });
   },
