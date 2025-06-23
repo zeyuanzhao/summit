@@ -33,6 +33,22 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
       return { feed: updatedFeed };
     });
   },
+  toggleSavePaper: (listId: string) => {
+    set((state) => {
+      const updatedFeed = [...state.feed];
+      if (updatedFeed[state.currentPage]) {
+        const currentPaper = updatedFeed[state.currentPage];
+        const lists = currentPaper.lists.includes(listId)
+          ? currentPaper.lists.filter((id) => id !== listId)
+          : [...currentPaper.lists, listId];
+        updatedFeed[state.currentPage] = {
+          ...currentPaper,
+          lists,
+        };
+      }
+      return { feed: updatedFeed };
+    });
+  },
   fetchInitialFeed: async (limit = 4, id = "") => {
     if (get().initialized) return;
     try {
@@ -100,5 +116,40 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
       return;
     }
     get().toggleLikePaper();
+  },
+  savePaper: async (userId: string | null, listId: string) => {
+    const { currentPage, feed } = get();
+    const paper = feed[currentPage];
+    if (!userId) {
+      toast.error("You must be logged in to save papers.");
+      return;
+    }
+    if (!paper?.id) {
+      toast.error("Invalid paper ID.");
+      return;
+    }
+    const eventType = paper.lists.includes(listId) ? "unsave" : "save";
+    const parsed = eventSchema.safeParse({
+      userId,
+      paperId: paper.id,
+      eventType,
+      payload: {
+        listId,
+      },
+    });
+    if (!parsed.success) {
+      toast.error("There was an error saving the paper.");
+      return;
+    }
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("event")
+      .insert(snakecaseKeys(parsed.data, { deep: true }));
+    debugger;
+    if (error) {
+      toast.error("There was an error saving the paper.");
+      return;
+    }
+    get().toggleSavePaper(listId);
   },
 }));

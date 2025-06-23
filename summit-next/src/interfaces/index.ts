@@ -12,7 +12,7 @@ export type Event = z.infer<typeof eventSchema>;
 
 export interface PaperUserData {
   liked: boolean;
-  saved: boolean;
+  lists: string[];
 }
 
 export interface FeedStore {
@@ -26,9 +26,11 @@ export interface FeedStore {
   decrementPage: () => void;
   setInitialized: (initialized: boolean) => void;
   toggleLikePaper: () => void;
+  toggleSavePaper: (listId: string) => void;
   fetchInitialFeed: (limit?: number, id?: string) => Promise<void>;
   fetchMoreFeed: (limit?: number) => Promise<void>;
   likePaper: (userId: string | null) => Promise<void>;
+  savePaper: (userId: string | null, listId: string) => Promise<void>;
 }
 
 export interface ListStore {
