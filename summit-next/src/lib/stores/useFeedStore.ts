@@ -104,7 +104,9 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
       payload: {},
     });
     if (!parsed.success) {
-      toast.error("There was an error liking the paper.");
+      toast.error(
+        `There was an error ${eventType === "like" ? "liking" : "unliking"} the paper.`,
+      );
       return;
     }
     const supabase = createClient();
@@ -112,7 +114,9 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
       .from("event")
       .insert(snakecaseKeys(parsed.data));
     if (error) {
-      toast.error("There was an error liking the paper.");
+      toast.error(
+        `There was an error ${eventType === "like" ? "liking" : "unliking"} the paper.`,
+      );
       return;
     }
     get().toggleLikePaper();
@@ -138,16 +142,19 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
       },
     });
     if (!parsed.success) {
-      toast.error("There was an error saving the paper.");
+      toast.error(
+        `There was an error ${eventType === "save" ? "saving" : "unsaving"} the paper.`,
+      );
       return;
     }
     const supabase = createClient();
     const { error } = await supabase
       .from("event")
       .insert(snakecaseKeys(parsed.data, { deep: true }));
-    debugger;
     if (error) {
-      toast.error("There was an error saving the paper.");
+      toast.error(
+        `There was an error ${eventType === "save" ? "saving" : "unsaving"} the paper.`,
+      );
       return;
     }
     get().toggleSavePaper(listId);
