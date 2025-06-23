@@ -6,6 +6,7 @@
     "neurips",
     "parallelizable",
     "Postgrest",
+    "snakecase",
     "Sonner",
     "supabase",
     "Upserted",

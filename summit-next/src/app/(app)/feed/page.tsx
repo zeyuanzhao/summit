@@ -16,6 +16,7 @@ export default function Page() {
     fetchInitialFeed,
     fetchMoreFeed,
     likePaper,
+    savePaper,
   } = useFeedStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<HTMLDivElement[]>([]);
@@ -153,6 +154,11 @@ export default function Page() {
         onDecrement={handleDecrement}
         handleLike={() => likePaper(user?.id ?? null)}
         liked={feed[currentPage]?.liked || false}
+        handleSave={async (listId: string) => {
+          await savePaper(user?.id ?? null, listId);
+        }}
+        saved={feed[currentPage]?.lists?.length > 0}
+        paperLists={feed[currentPage]?.lists || []}
       />
     </div>
   );

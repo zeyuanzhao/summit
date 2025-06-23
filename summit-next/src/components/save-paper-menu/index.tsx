@@ -7,13 +7,22 @@ import { UserContext } from "../context/user-context";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-export function SavePaperMenu() {
+export function SavePaperMenu({
+  handleSave = async () => {},
+  saved = false,
+  paperLists = [],
+}: {
+  handleSave?: (listId: string) => Promise<void>;
+  saved?: boolean;
+  paperLists?: string[];
+}) {
   const { getLists, lists, initialized } = useListStore();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,7 +44,10 @@ export function SavePaperMenu() {
     <DropdownMenu open={open} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
-          <HiOutlineBookmark />
+          <HiOutlineBookmark
+            color={saved ? "red" : "currentColor"}
+            fill={saved ? "red" : "none"}
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="min-w-48">
@@ -50,7 +62,13 @@ export function SavePaperMenu() {
         )}
         {!loading &&
           lists.map((list) => (
-            <DropdownMenuItem key={list.id}>{list.title}</DropdownMenuItem>
+            <DropdownMenuCheckboxItem
+              key={list.id}
+              checked={paperLists.includes(list.id || "")}
+              onCheckedChange={() => handleSave(list.id || "")}
+            >
+              {list.title}
+            </DropdownMenuCheckboxItem>
           ))}
       </DropdownMenuContent>
     </DropdownMenu>
