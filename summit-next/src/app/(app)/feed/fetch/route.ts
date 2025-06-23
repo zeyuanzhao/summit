@@ -5,6 +5,7 @@ import { z } from "zod";
 import { getRecommendations } from "@/lib/feed";
 import { createClient } from "@/lib/supabase/server";
 import { eventSchema } from "@/lib/validation/event";
+import { listPaperSchema } from "@/lib/validation/listPaper";
 import { paperSchema } from "@/lib/validation/paper";
 
 export async function GET(request: NextRequest) {
@@ -46,7 +47,7 @@ export async function GET(request: NextRequest) {
       .in("paper_id", allIds);
 
     savePromise = supabase
-      .from("latest_save")
+      .from("list_paper")
       .select("*")
       .eq("user_id", user?.id)
       .in("paper_id", allIds);
@@ -115,7 +116,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const zodSaves = z.array(eventSchema).safeParse(camelcaseKeys(saves));
+  const zodSaves = z.array(listPaperSchema).safeParse(camelcaseKeys(saves));
   if (!zodSaves.success) {
     return new Response(JSON.stringify({ error: "Invalid save data." }), {
       status: 500,
@@ -128,14 +129,19 @@ export async function GET(request: NextRequest) {
   const likesMap = new Map(
     parsedLikes.map((like) => [like.paperId, like.eventType === "like"]),
   );
-  const savesMap = new Map(
-    parsedSaves.map((save) => [save.paperId, save.eventType === "save"]),
-  );
+
+  const savesMap = new Map<string, string[]>();
+  parsedSaves.forEach((save) => {
+    if (!savesMap.has(save.paperId)) {
+      savesMap.set(save.paperId, []);
+    }
+    savesMap.get(save.paperId)?.push(save.listId);
+  });
 
   const papersWithState = parsedPapers.map((paper) => ({
     ...paper,
     liked: likesMap.get(paper.id || "") || false,
-    saved: savesMap.get(paper.id || "") || false,
+    lists: savesMap.get(paper.id || "") || [],
   }));
 
   return new Response(JSON.stringify(papersWithState), {
