@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { ErrorMessage } from "@/components/error";
 import { ListCard } from "@/components/list-card";
+import { ListsGrid } from "@/components/lists-grid/page";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { listSchema } from "@/lib/validation/list";
@@ -40,15 +41,7 @@ export default async function Page() {
           <h2 className="text-4xl font-bold">Lists</h2>
           <Button variant="outline">Create List</Button>
         </div>
-        {lists && lists.length > 0 ? (
-          <div className="grid">
-            {parsedLists.map((list) => (
-              <ListCard className="h-40 w-96" {...list} key={list.id} />
-            ))}
-          </div>
-        ) : (
-          <p>You don&apos;t have any lists yet.</p>
-        )}
+        <ListsGrid lists={parsedLists} />
       </div>
     </div>
   );
