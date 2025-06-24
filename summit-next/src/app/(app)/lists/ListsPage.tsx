@@ -1,5 +1,5 @@
+import { CreateListDialog } from "@/components/create-list-dialog";
 import { ListCard } from "@/components/list-card";
-import { Button } from "@/components/ui/button";
 import { List } from "@/interfaces";
 
 export function ListsPage({ lists }: { lists: List[] }) {
@@ -7,7 +7,7 @@ export function ListsPage({ lists }: { lists: List[] }) {
     <div className="flex max-w-6xl flex-1 flex-col px-28 py-20">
       <div className="mb-12 flex flex-row items-center justify-between">
         <h2 className="text-4xl font-bold">Lists</h2>
-        <Button variant="outline">Create List</Button>
+        <CreateListDialog />
       </div>
       <div>
         {lists && lists.length > 0 ? (
