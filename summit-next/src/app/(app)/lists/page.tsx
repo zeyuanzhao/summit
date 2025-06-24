@@ -3,11 +3,10 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { ErrorMessage } from "@/components/error";
-import { ListCard } from "@/components/list-card";
-import { ListsGrid } from "@/components/lists-grid/page";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { listSchema } from "@/lib/validation/list";
+
+import { ListsPage } from "./ListsPage";
 
 export default async function Page() {
   const supabase = await createClient();
@@ -36,13 +35,7 @@ export default async function Page() {
 
   return (
     <div className="flex flex-1 flex-row justify-around">
-      <div className="flex max-w-6xl flex-1 flex-col px-28 py-20">
-        <div className="mb-12 flex flex-row items-center justify-between">
-          <h2 className="text-4xl font-bold">Lists</h2>
-          <Button variant="outline">Create List</Button>
-        </div>
-        <ListsGrid lists={parsedLists} />
-      </div>
+      <ListsPage lists={parsedLists} />
     </div>
   );
 }
