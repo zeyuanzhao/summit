@@ -1,9 +1,22 @@
 "use client";
 
+import { DropdownMenuRadioGroup } from "@radix-ui/react-dropdown-menu";
+import camelcaseKeys from "camelcase-keys";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { HiChevronDown } from "react-icons/hi2";
+import { toast } from "sonner";
+import { z } from "zod";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -13,6 +26,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { List, Paper } from "@/interfaces";
+import { createClient } from "@/lib/supabase/client";
+import { paperSchema } from "@/lib/validation/paper";
 
 export function ListPage({
   lists,
@@ -29,6 +44,30 @@ export function ListPage({
   );
   const [currPapers, setCurrPapers] = useState<Paper[]>(listPapers);
   const [currId, setCurrId] = useState<string>(id);
+  const supabase = createClient();
+
+  const switchList = async (listId: string) => {
+    toast.message(`Switched to list: ${listId}`);
+    setCurrId(listId);
+    setCurrList(lists.find((list) => list.id === listId) || null);
+    const newPapersResult = supabase
+      .from("list_paper")
+      .select("paper(*)")
+      .eq("list_id", listId);
+    const { data: newPapers, error: errorNewPapers } = await newPapersResult;
+    if (errorNewPapers) {
+      toast.error("Failed to fetch papers for the selected list.");
+      return;
+    }
+    const zodNewPapers = z
+      .array(paperSchema)
+      .safeParse(newPapers.map((lp) => camelcaseKeys(lp.paper)));
+    if (!zodNewPapers.success) {
+      toast.error("Invalid papers data.");
+      return;
+    }
+    setCurrPapers(zodNewPapers.data);
+  };
 
   return (
     <div className="flex max-w-6xl flex-1 flex-col px-28 py-20">
@@ -36,7 +75,25 @@ export function ListPage({
         <Link href="/lists" className="absolute -top-6 left-0">
           <p className="text-sm">&larr; Back to Lists</p>
         </Link>
-        <h2 className="text-4xl font-bold">{currList?.title}</h2>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="flex flex-row items-center gap-1 hover:cursor-pointer">
+              <h2 className="text-4xl font-bold">{currList?.title}</h2>
+              <HiChevronDown size="20px" />
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Lists</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuRadioGroup value={currId} onValueChange={switchList}>
+              {lists.map((list) => (
+                <DropdownMenuRadioItem key={list.id} value={list.id || ""}>
+                  {list.title}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div>
         <Table>
