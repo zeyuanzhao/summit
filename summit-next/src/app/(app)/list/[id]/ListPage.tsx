@@ -72,7 +72,7 @@ export function ListPage({
 
   return (
     <div className="flex max-w-6xl flex-1 flex-col px-28 py-20">
-      <div className="relative mb-12 flex flex-row items-center justify-between">
+      <div className="relative mb-8 flex min-h-20 flex-col items-start">
         <Link href="/lists" className="absolute -top-6 left-0">
           <p className="text-sm">&larr; Back to Lists</p>
         </Link>
@@ -95,6 +95,7 @@ export function ListPage({
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
+        <p className="mt-4">{currList?.description}</p>
       </div>
       <div>
         <Table>
