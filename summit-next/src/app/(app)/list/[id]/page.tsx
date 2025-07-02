@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { ErrorMessage } from "@/components/error";
-import { Paper } from "@/interfaces";
 import { createClient } from "@/lib/supabase/server";
 import { listSchema } from "@/lib/validation/list";
 import { paperSchema } from "@/lib/validation/paper";

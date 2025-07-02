@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import {
@@ -21,6 +23,7 @@ export function ListPage({
   listPapers?: Paper[];
   id: string;
 }) {
+  const router = useRouter();
   const [currList, setCurrList] = useState<List | null>(
     lists.find((list) => list.id === id) || null,
   );
@@ -29,7 +32,10 @@ export function ListPage({
 
   return (
     <div className="flex max-w-6xl flex-1 flex-col px-28 py-20">
-      <div className="mb-12 flex flex-row items-center justify-between">
+      <div className="relative mb-12 flex flex-row items-center justify-between">
+        <Link href="/lists" className="absolute -top-6 left-0">
+          <p className="text-sm">&larr; Back to Lists</p>
+        </Link>
         <h2 className="text-4xl font-bold">{currList?.title}</h2>
       </div>
       <div>
@@ -43,7 +49,11 @@ export function ListPage({
           </TableHeader>
           <TableBody>
             {currPapers.map((paper) => (
-              <TableRow key={paper.id}>
+              <TableRow
+                key={paper.id}
+                className="cursor-pointer hover:bg-gray-100"
+                onClick={() => router.push(`/feed/${paper.id}`)}
+              >
                 <TableCell>{paper.title}</TableCell>
                 <TableCell>{paper.venue}</TableCell>
                 <TableCell className="text-right">
