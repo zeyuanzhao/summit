@@ -2,12 +2,15 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import camelcaseKeys from "camelcase-keys";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { List } from "@/interfaces";
 import { createClient } from "@/lib/supabase/client";
+import { listSchema } from "@/lib/validation/list";
 
 import { UserContext } from "../context/user-context";
 import { Button } from "../ui/button";
@@ -42,7 +45,11 @@ const formSchema = z.object({
   }),
 });
 
-export function CreateListDialog() {
+export function CreateListDialog({
+  onCreate,
+}: {
+  onCreate: (list: List) => void;
+}) {
   const [open, setOpen] = useState(false);
   const user = useContext(UserContext);
 
@@ -58,11 +65,14 @@ export function CreateListDialog() {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     const { title, description } = data;
 
-    const { error } = await supabase.from("list").insert({
-      user_id: user?.id,
-      title,
-      description,
-    });
+    const { error, data: newList } = await supabase
+      .from("list")
+      .insert({
+        user_id: user?.id,
+        title,
+        description,
+      })
+      .select();
 
     if (error) {
       toast.error("Failed to create list. Please try again.");
@@ -70,6 +80,14 @@ export function CreateListDialog() {
       form.reset();
       toast.success("List created successfully!");
       setOpen(false);
+      const zodNewList = z
+        .array(listSchema)
+        .safeParse(newList.map((l) => camelcaseKeys(l)));
+      if (!zodNewList.success) {
+        toast.error("Invalid list data returned from server.");
+        return;
+      }
+      onCreate(zodNewList.data[0] as List);
     }
   };
 
