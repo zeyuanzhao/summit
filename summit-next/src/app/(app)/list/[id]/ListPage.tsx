@@ -67,6 +67,7 @@ export function ListPage({
       return;
     }
     setCurrPapers(zodNewPapers.data);
+    window.history.pushState(null, "", `/list/${listId}`);
   };
 
   return (
