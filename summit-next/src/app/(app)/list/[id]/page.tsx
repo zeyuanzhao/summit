@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { ErrorMessage } from "@/components/error";
+import { Paper } from "@/interfaces";
 import { createClient } from "@/lib/supabase/server";
 import { listSchema } from "@/lib/validation/list";
 import { paperSchema } from "@/lib/validation/paper";
@@ -33,7 +34,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const listPapersPromise = supabase
     .from("list_paper")
-    .select("papers(*)")
+    .select("paper(*)")
     .eq("list_id", id);
 
   const [listsResult, listPapersResult] = await Promise.all([
@@ -55,7 +56,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const zodListPapers = z
     .array(paperSchema)
-    .safeParse(camelcaseKeys(listPapers));
+    .safeParse(listPapers.map((lp) => camelcaseKeys(lp.paper)));
   if (!zodListPapers.success) {
     return <ErrorMessage title="Error" error="Invalid papers data." />;
   }
@@ -71,8 +72,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     );
   }
   return (
-    <div>
-      <ListPage list={parsedLists} listPapers={parsedListPapers} />
+    <div className="flex flex-1 flex-row justify-around">
+      <ListPage lists={parsedLists} listPapers={parsedListPapers} id={id} />
     </div>
   );
 }
