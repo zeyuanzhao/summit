@@ -11,7 +11,7 @@ export function ListsPage({ lists }: { lists: List[] }) {
       </div>
       <div>
         {lists && lists.length > 0 ? (
-          <div className="grid">
+          <div className="grid grid-cols-2 gap-4">
             {lists.map((list) => (
               <ListCard className="h-40 w-96" {...list} key={list.id} />
             ))}
