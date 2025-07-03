@@ -33,7 +33,7 @@ def main():
     generate_jsonl_file(
         variables=papers,
         prompt_id="pmpt_6865fea7a73481979d2a20d7492a8b990e375d240959c724",
-        filename="neurips.jsonl",
+        filename="summaries/neurips.jsonl",
         fields=["title", "abstract", "venue", "published_date"],
     )
 
