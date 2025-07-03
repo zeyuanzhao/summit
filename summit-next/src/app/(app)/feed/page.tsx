@@ -144,7 +144,7 @@ export default function Page() {
             ref={(el) => {
               cardRefs.current[i] = el!;
             }}
-            className="max-h-[calc(100vh-95px)] min-h-[400px] w-[600px] flex-shrink-0 snap-center snap-always overflow-hidden"
+            className="h-[calc(100vh-95px)] min-h-[400px] w-[600px] flex-shrink-0 snap-center snap-always overflow-hidden"
             {...paper}
           />
         ))}

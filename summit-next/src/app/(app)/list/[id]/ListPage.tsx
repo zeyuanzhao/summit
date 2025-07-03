@@ -47,7 +47,6 @@ export function ListPage({
   const supabase = createClient();
 
   const switchList = async (listId: string) => {
-    toast.message(`Switched to list: ${listId}`);
     setCurrId(listId);
     setCurrList(lists.find((list) => list.id === listId) || null);
     const newPapersResult = supabase
