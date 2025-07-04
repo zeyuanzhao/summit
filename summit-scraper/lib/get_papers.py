@@ -1,7 +1,7 @@
 
 def get_papers(supabase, venue: str | None = None, start_date: str | None = None, end_date: str | None = None, offset: int = 0, limit: int = 1000, amount: int | None = None) -> list:
 
-    query = supabase.from_("paper").select("*")
+    query = supabase.from_("paper_detail").select("*")
 
     if venue:
         query = query.eq("venue", venue)

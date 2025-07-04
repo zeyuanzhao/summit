@@ -7,15 +7,17 @@ import sys
 from openai import OpenAI
 import io
 import json  # Added import
+from typing_extensions import Literal
 
 client = OpenAI()
 
 
-def generate_jsonl_file(
+def generate_summaries_jsonl(
     variables: list[dict[str, str]],
     prompt_id: str,
     prompt_version: str | None = None,
     filename: str = "batch.jsonl",
+    model: str = "gpt-4.1-mini",
     fields: list[str] | None = None,
 ):
     with open(filename, "w") as f:
@@ -25,7 +27,7 @@ def generate_jsonl_file(
                 "method": "POST",
                 "url": "/v1/responses",
                 "body": {
-                    "model": "gpt-4.1-mini",
+                    "model": model,
                     "input": [],
                     "prompt": {
                         "id": prompt_id,
@@ -37,10 +39,36 @@ def generate_jsonl_file(
                     "store": True,
                 },
             }
-            f.write(json.dumps(entry) + "\n")  # Write as JSONL
+            f.write(json.dumps(entry) + "\n")
 
 
-def create_batch(file: io.BufferedReader, description: str | None = None):
+def generate_embeddings_jsonl(
+    texts: list[dict[str, str]],
+    filename: str = "batch.jsonl",
+    model: str = "text-embedding-3-small",
+):
+    with open(filename, "w") as f:
+        for text in texts:
+            entry = {
+                "custom_id": text["id"],
+                "method": "POST",
+                "url": "/v1/embeddings",
+                "body": {
+                    "model": model,
+                    "input": text["text"],
+                    "store": True,
+                },
+            }
+            f.write(json.dumps(entry) + "\n")
+
+
+def create_batch(
+    file: io.BufferedReader,
+    description: str | None = None,
+    endpoint: Literal[
+        "/v1/responses", "/v1/chat/completions", "/v1/embeddings", "/v1/completions"
+    ] = "/v1/responses",
+):
     batch_input_file = client.files.create(
         file=file,
         purpose="batch",
@@ -48,7 +76,7 @@ def create_batch(file: io.BufferedReader, description: str | None = None):
     batch_input_file_id = batch_input_file.id
     response = client.batches.create(
         input_file_id=batch_input_file_id,
-        endpoint="/v1/responses",
+        endpoint=endpoint,
         completion_window="24h",
         metadata={
             "description": (

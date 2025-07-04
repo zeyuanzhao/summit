@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from lib.get_papers import get_papers
-from lib.batch import generate_summaries_jsonl, create_batch
+from lib.batch import create_batch, generate_embeddings_jsonl
 from supabase import Client, create_client
 
 
@@ -19,30 +19,41 @@ print(f"Connecting to Supabase at {url} with service key {key[:4]}...")
 supabase: Client = create_client(url, key)
 
 
-def create_neurips_summaries_batch():
+def create_neurips_embeddings_batch():
     papers = get_papers(
         supabase,
         venue="NeurIPS",
         start_date="2025-06-05",
         end_date="2025-06-07",
-        amount=None,
+        amount=20,
     )
     if not papers:
         print("No papers found.")
         return
     print("Fetched papers: ", len(papers))
-    generate_summaries_jsonl(
-        variables=papers,
-        prompt_id="pmpt_6865fea7a73481979d2a20d7492a8b990e375d240959c724",
-        filename="summaries/neurips.jsonl",
-        fields=["title", "abstract", "venue", "published_date"],
+    texts = [
+        {
+            "id": paper["id"],
+            "text": f"""Title: {paper["title"]}
+Tags: {[tag["name"] for tag in paper["tags"]]}
+Abstract: {paper["abstract"]}
+Summary: {paper["summary"]}
+""",
+        }
+        for paper in papers
+    ]
+    generate_embeddings_jsonl(
+        texts,
+        filename="embeddings/neurips.jsonl",
+        model="text-embedding-3-small",
     )
     batch = create_batch(
-        file=open("summaries/neurips.jsonl", "rb"),
-        description="Summaries for NeurIPS 23-24 papers",
+        file=open("embeddings/neurips.jsonl", "rb"),
+        description="Embeddings for NeurIPS 23-24 papers",
+        endpoint="/v1/embeddings",
     )
     print(batch.to_json())
 
 
 if __name__ == "__main__":
-    create_neurips_summaries_batch()
+    create_neurips_embeddings_batch()
