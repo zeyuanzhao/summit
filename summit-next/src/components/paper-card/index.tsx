@@ -1,4 +1,7 @@
+import { TabsContent } from "@radix-ui/react-tabs";
 import Link from "next/link";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { Paper } from "@/interfaces";
 
@@ -10,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 export function PaperCard({
   id,
@@ -18,15 +22,30 @@ export function PaperCard({
   canonicalId: doi,
   className,
   ref,
+  summary,
 }: Paper & { className?: string; ref?: React.Ref<HTMLDivElement> }) {
   return (
     <Card className={`${className}`} ref={ref}>
       <CardHeader>
         <CardTitle className="text-4xl">{title}</CardTitle>
-        <p className="text-muted-foreground text-sm">Paper ID: {id}</p>
+        {/* <p className="text-muted-foreground text-sm">Paper ID: {id}</p> */}
       </CardHeader>
       <CardContent className="flex-1 overflow-auto">
-        <p>{abstract}</p>
+        <Tabs
+          defaultValue={summary ? "summary" : "abstract"}
+          className="h-full"
+        >
+          <TabsList>
+            <TabsTrigger value="summary">Summary</TabsTrigger>
+            <TabsTrigger value="abstract">Abstract</TabsTrigger>
+          </TabsList>
+          <TabsContent value="summary">
+            <Markdown remarkPlugins={[remarkGfm]}>{summary}</Markdown>
+          </TabsContent>
+          <TabsContent value="abstract">
+            <Markdown remarkPlugins={[remarkGfm]}>{abstract}</Markdown>
+          </TabsContent>
+        </Tabs>
       </CardContent>
       <CardFooter className="flex flex-row justify-between">
         <Button variant="outline" asChild>

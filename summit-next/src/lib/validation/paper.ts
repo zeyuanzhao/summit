@@ -10,4 +10,5 @@ export const paperSchema = z.object({
   publishedDate: z.coerce.date().nullable().optional(),
   venue: z.string().nullable().optional(),
   url: z.string().url().nullable().optional(),
+  summary: z.string().nullable().optional(),
 });
