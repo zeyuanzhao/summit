@@ -2,8 +2,7 @@ import os
 import json
 import sys
 from dotenv import load_dotenv
-
-from supabase import Client, create_client
+from supabase import Client, PostgrestAPIError, create_client
 
 
 load_dotenv()
@@ -31,7 +30,7 @@ def upload_summaries(filename: str):
         id = summary.get("custom_id")
         if not id:
             print("No id found: ", summary.get("id"))
-        body = (
+        body: str = (
             summary.get("response", {})
             .get("body", {})
             .get("output", {})[0]
@@ -41,7 +40,40 @@ def upload_summaries(filename: str):
         if not body:
             print("No body found for id: ", id)
             continue
-        supabase.from_("paper").update({"summary": body}).eq("id", id).execute()
+        tags = (
+            body.lower().split("**tags:**")[-1].split(",")
+            if "**tags:**" in body.lower()
+            else []
+        )
+        tags = [tag.strip() for tag in tags if tag.strip()]
+        body = body.split("**Tags")[0].strip()
+        try:
+            supabase.from_("paper").update({"summary": body}).eq("id", id).execute()
+        except PostgrestAPIError as e:
+            print(f"Error updating paper with id {id}: {e}")
+            continue
+        if not tags:
+            print(f"No tags found for id {id}, skipping tag upload.")
+            continue
+        try:
+            tags_response = (
+                supabase.from_("tag")
+                .upsert([{"name": tag} for tag in tags], on_conflict="name")
+                .execute()
+            )
+        except PostgrestAPIError as e:
+            print(f"Error uploading tags for paper with id {id}: {e}")
+            continue
+        tag_ids = [tag["id"] for tag in tags_response.data]
+        if not tag_ids:
+            print(f"No tag IDs found for paper with id {id}, skipping tag association.")
+            continue
+        try:
+            tag_paper = [{"paper_id": id, "tag_id": tag_id} for tag_id in tag_ids]
+            supabase.from_("tag_paper").upsert(tag_paper).execute()
+        except PostgrestAPIError as e:
+            print(f"Error associating tags with paper id {id}: {e}")
+            continue
 
 
 if __name__ == "__main__":
