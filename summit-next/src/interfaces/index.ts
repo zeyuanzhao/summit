@@ -3,12 +3,15 @@ import { z } from "zod";
 import { eventSchema } from "@/lib/validation/event";
 import { listSchema } from "@/lib/validation/list";
 import { paperSchema } from "@/lib/validation/paper";
+import { profileSchema } from "@/lib/validation/profile";
 
 export type Paper = z.infer<typeof paperSchema>;
 
 export type List = z.infer<typeof listSchema>;
 
 export type Event = z.infer<typeof eventSchema>;
+
+export type Profile = z.infer<typeof profileSchema>;
 
 export interface PaperUserData {
   liked: boolean;

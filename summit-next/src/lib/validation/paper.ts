@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { parseStringVector } from "../utils";
+
 export const paperSchema = z.object({
   id: z.string().uuid().optional(),
   createdAt: z.coerce.date().optional(),
@@ -11,4 +13,5 @@ export const paperSchema = z.object({
   venue: z.string().nullable().optional(),
   url: z.string().url().nullable().optional(),
   summary: z.string().nullable().optional(),
+  embedding: z.string().transform(parseStringVector).nullable().optional(),
 });
