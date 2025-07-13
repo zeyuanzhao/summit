@@ -30,7 +30,7 @@ export interface FeedStore {
   fetchInitialFeed: (limit?: number, id?: string) => Promise<void>;
   fetchMoreFeed: (limit?: number) => Promise<void>;
   likePaper: () => Promise<void>;
-  savePaper: (userId: string | null, listId: string) => Promise<void>;
+  savePaper: (listId: string) => Promise<void>;
 }
 
 export interface ListStore {

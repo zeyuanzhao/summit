@@ -13,7 +13,7 @@ export async function POST(
   const { user } = (await supabase.auth.getUser()).data;
   if (!user?.id) {
     return new Response(
-      JSON.stringify({ error: "You must be logged in to save papers." }),
+      JSON.stringify({ error: "You must be logged in to unsave papers." }),
       { status: 401, headers: { "Content-Type": "application/json" } },
     );
   }
@@ -41,7 +41,7 @@ export async function POST(
     .from("event")
     .insert(snakecaseKeys(parsed.data, { deep: true }));
   if (error) {
-    return new Response(JSON.stringify({ error: "Failed to save paper." }), {
+    return new Response(JSON.stringify({ error: "Failed to unsave paper." }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

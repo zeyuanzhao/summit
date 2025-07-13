@@ -1,10 +1,7 @@
-import snakecaseKeys from "snakecase-keys";
 import { toast } from "sonner";
 import { create } from "zustand";
 
 import { FeedStore, Paper, PaperUserData } from "@/interfaces";
-import { createClient } from "@/lib/supabase/client";
-import { eventSchema } from "@/lib/validation/event";
 
 export const useFeedStore = create<FeedStore>()((set, get) => ({
   feed: [],
@@ -111,40 +108,30 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
     }
     get().toggleLikePaper();
   },
-  savePaper: async (userId: string | null, listId: string) => {
+  savePaper: async (listId: string) => {
     const { currentPage, feed } = get();
     const paper = feed[currentPage];
-    if (!userId) {
-      toast.error("You must be logged in to save papers.");
-      return;
-    }
-    if (!paper?.id) {
-      toast.error("Invalid paper ID.");
-      return;
-    }
     const eventType = paper.lists.includes(listId) ? "unsave" : "save";
-    const parsed = eventSchema.safeParse({
-      userId,
-      paperId: paper.id,
-      eventType,
-      payload: {
-        listId,
-      },
-    });
-    if (!parsed.success) {
-      toast.error(
-        `There was an error ${eventType === "save" ? "saving" : "unsaving"} the paper.`,
-      );
-      return;
+    let error;
+    if (eventType === "save") {
+      ({ error } = await fetch(`/api/papers/${paper.id}/save`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ listId }),
+      }).then((res) => res.json()));
+    } else if (eventType === "unsave") {
+      ({ error } = await fetch(`/api/papers/${paper.id}/unsave`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ listId }),
+      }).then((res) => res.json()));
     }
-    const supabase = createClient();
-    const { error } = await supabase
-      .from("event")
-      .insert(snakecaseKeys(parsed.data, { deep: true }));
     if (error) {
-      toast.error(
-        `There was an error ${eventType === "save" ? "saving" : "unsaving"} the paper.`,
-      );
+      toast.error(error || `Failed to ${eventType} paper.`);
       return;
     }
     get().toggleSavePaper(listId);

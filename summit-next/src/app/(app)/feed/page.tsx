@@ -1,8 +1,7 @@
 "use client";
 
-import { useContext, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
-import { UserContext } from "@/components/context/user-context";
 import { FeedSidebar } from "@/components/feed-sidebar";
 import { PaperCard } from "@/components/paper-card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +20,6 @@ export default function Page() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<HTMLDivElement[]>([]);
   const hasNavigatedBack = useRef(false);
-  const user = useContext(UserContext);
 
   useEffect(() => {
     fetchInitialFeed();
@@ -155,7 +153,7 @@ export default function Page() {
         handleLike={likePaper}
         liked={feed[currentPage]?.liked || false}
         handleSave={async (listId: string) => {
-          await savePaper(user?.id ?? null, listId);
+          await savePaper(listId);
         }}
         saved={feed[currentPage]?.lists?.length > 0}
         paperLists={feed[currentPage]?.lists || []}
