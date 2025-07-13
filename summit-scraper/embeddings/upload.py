@@ -18,7 +18,7 @@ print(f"Connecting to Supabase at {url} with service key {key[:4]}...")
 supabase: Client = create_client(url, key)
 
 
-def upload_embeddings(filename: str):
+def upload_embeddings(filename: str, start_line: int = 1):
     with open(filename, "rb") as file:
         lines = file.read().splitlines()
     if not lines:
@@ -28,6 +28,8 @@ def upload_embeddings(filename: str):
     total = len(lines)
 
     for idx, line in enumerate(lines, 1):
+        if idx < start_line:
+            continue
         embedding = json.loads(line)
         id = embedding.get("custom_id")
         if not id:
@@ -61,8 +63,9 @@ def upload_embeddings(filename: str):
 
 if __name__ == "__main__":
     filename = sys.argv[1] if len(sys.argv) > 1 else "output.jsonl"
+    start_line = int(sys.argv[2]) if len(sys.argv) > 2 else 1
     if not os.path.exists(filename):
         print(f"File {filename} does not exist.")
         sys.exit(1)
-    upload_embeddings(filename)
+    upload_embeddings(filename, start_line)
     print(f"Summaries uploaded from {filename}.")
