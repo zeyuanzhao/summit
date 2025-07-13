@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
   const ids = searchParams.getAll("ids") || [];
   const limit = parseInt(searchParams.get("limit") || "4", 10);
   const supabase = await createClient();
-  const remain = limit - ids.length;
   const { user } = (await supabase.auth.getUser()).data;
+  const remain = limit - ids.length;
 
   const papersPromise = supabase
     .from("paper")
@@ -22,14 +22,9 @@ export async function GET(request: NextRequest) {
     .in("id", ids)
     .limit(limit);
 
+  let moreIds = [];
   try {
-    const { data, error } = await papersPromise;
-    if (error) {
-      throw new Error(`Failed to fetch papers: ${error.message}`);
-    }
-    if (!data || data.length === 0) {
-      throw new Error("No papers found");
-    }
+    moreIds = await getRecommendations(remain);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ error: errorMessage }), {
@@ -38,7 +33,6 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const moreIds = await getRecommendations(remain);
   let morePapersPromise;
   if (remain > 0) {
     morePapersPromise = supabase

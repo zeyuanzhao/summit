@@ -6,6 +6,9 @@ import { paperMatchSchema } from "./validation/paperMatch";
 import { profileSchema } from "./validation/profile";
 
 async function getAnonymousRecommendations(limit: number = 10) {
+  if (limit <= 0) {
+    return [];
+  }
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("paper")
