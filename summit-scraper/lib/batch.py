@@ -101,6 +101,15 @@ if __name__ == "__main__":
     batch_id = sys.argv[1] if len(sys.argv) > 1 else None
     filename = sys.argv[2] if len(sys.argv) > 2 else "output.jsonl"
     if batch_id:
+        if batch_id == "start":
+            endpoint = sys.argv[3] if len(sys.argv) > 3 else "/v1/responses"
+            response = create_batch(
+                file=open(filename, "rb"),
+                description="Batch processing of " + filename,
+                endpoint=endpoint
+            )
+            print(response.to_json())
+            sys.exit(0)
         status = batch_status(batch_id)
         print(f"Batch ID: {batch_id}, Status: {status.to_json()}")
         if status.status == "completed":

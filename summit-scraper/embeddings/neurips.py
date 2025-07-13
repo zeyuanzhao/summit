@@ -25,7 +25,6 @@ def create_neurips_embeddings_batch():
         venue="NeurIPS",
         start_date="2025-06-05",
         end_date="2025-06-07",
-        amount=20,
     )
     if not papers:
         print("No papers found.")
