@@ -80,9 +80,17 @@ export async function POST(
     if (!userEmbedding) {
       userEmbedding = new Array(paperEmbedding.length).fill(0);
     }
+    const normalizedUserEmbedding = normalizeVector(userEmbedding);
+    const normalizedPaperEmbedding = normalizeVector(paperEmbedding);
+    if (!normalizedUserEmbedding || !normalizedPaperEmbedding) {
+      return new Response(JSON.stringify({ error: "Invalid embeddings." }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     const newEmbedding = normalizeVector(
-      paperEmbedding.map((v, i) => {
-        return 0.2 * v + 0.8 * userEmbedding[i];
+      normalizedPaperEmbedding.map((v, i) => {
+        return 0.2 * v + 0.8 * normalizedUserEmbedding[i];
       }),
     );
     const { error: updateEmbeddingError } = await supabase
