@@ -7,6 +7,9 @@ import { eventSchema } from "@/lib/validation/event";
 import { paperSchema } from "@/lib/validation/paper";
 import { profileSchema } from "@/lib/validation/profile";
 
+const PAPER_EMBEDDING_WEIGHT = 0.2;
+const USER_EMBEDDING_WEIGHT = 0.8;
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -89,9 +92,11 @@ export async function POST(
       });
     }
     const newEmbedding = normalizeVector(
-      normalizedPaperEmbedding.map((v, i) => {
-        return 0.2 * v + 0.8 * normalizedUserEmbedding[i];
-      }),
+      normalizedPaperEmbedding.map(
+        (v, i) =>
+          PAPER_EMBEDDING_WEIGHT * v +
+          USER_EMBEDDING_WEIGHT * normalizedUserEmbedding[i],
+      ),
     );
     const { error: updateEmbeddingError } = await supabase
       .from("profile")
