@@ -5,7 +5,7 @@ import { eventSchema } from "@/lib/validation/event";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const paperId = (await params).id;
   const supabase = await createClient();
