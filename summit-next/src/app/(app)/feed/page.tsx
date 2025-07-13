@@ -152,7 +152,7 @@ export default function Page() {
       <FeedSidebar
         onIncrement={handleIncrement}
         onDecrement={handleDecrement}
-        handleLike={() => likePaper(user?.id ?? null)}
+        handleLike={likePaper}
         liked={feed[currentPage]?.liked || false}
         handleSave={async (listId: string) => {
           await savePaper(user?.id ?? null, listId);

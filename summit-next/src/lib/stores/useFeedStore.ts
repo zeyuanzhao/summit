@@ -52,7 +52,7 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
   fetchInitialFeed: async (limit = 4, id = "") => {
     if (get().initialized) return;
     try {
-      const url = new URL("/feed/fetch", window.location.origin);
+      const url = new URL("/api/feed/fetch", window.location.origin);
       url.searchParams.append("limit", limit.toString());
       if (id) {
         url.searchParams.append("ids", id);
@@ -71,7 +71,7 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
   },
   fetchMoreFeed: async (limit = 4) => {
     try {
-      const url = new URL("/feed/fetch", window.location.origin);
+      const url = new URL("/api/feed/fetch", window.location.origin);
       url.searchParams.append("limit", limit.toString());
       const res = await fetch(url.toString());
       if (!res.ok) {
@@ -85,38 +85,28 @@ export const useFeedStore = create<FeedStore>()((set, get) => ({
       toast.error((error as Error).message || "Failed to fetch more feed");
     }
   },
-  likePaper: async (userId: string | null) => {
+  likePaper: async () => {
     const { currentPage, feed } = get();
     const paper = feed[currentPage];
-    if (!userId) {
-      toast.error("You must be logged in to like papers.");
-      return;
-    }
-    if (!paper?.id) {
-      toast.error("Invalid paper ID.");
-      return;
-    }
     const eventType = paper.liked ? "unlike" : "like";
-    const parsed = eventSchema.safeParse({
-      userId,
-      paperId: paper.id,
-      eventType,
-      payload: {},
-    });
-    if (!parsed.success) {
-      toast.error(
-        `There was an error ${eventType === "like" ? "liking" : "unliking"} the paper.`,
-      );
-      return;
+    let error;
+    if (eventType === "like") {
+      ({ error } = await fetch(`/api/papers/${paper.id}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((res) => res.json()));
+    } else if (eventType === "unlike") {
+      ({ error } = await fetch(`/api/papers/${paper.id}/unlike`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((res) => res.json()));
     }
-    const supabase = createClient();
-    const { error } = await supabase
-      .from("event")
-      .insert(snakecaseKeys(parsed.data));
     if (error) {
-      toast.error(
-        `There was an error ${eventType === "like" ? "liking" : "unliking"} the paper.`,
-      );
+      toast.error(error || `Failed to ${eventType} paper.`);
       return;
     }
     get().toggleLikePaper();
