@@ -94,7 +94,9 @@ export default function Page() {
         </div>
         <div className="pt-8">
           <div>
-            <h2 className="pb-2 text-3xl">Liked Papers</h2>
+            <h2 className="pb-2 text-3xl">
+              Liked Papers ({likedPapers.length})
+            </h2>
             <Table>
               <TableHeader>
                 <TableRow>
