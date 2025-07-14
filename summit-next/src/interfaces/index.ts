@@ -47,3 +47,11 @@ export interface ListStore {
   getLists: (userId: string | null) => Promise<List[]>;
   fetchLists: (userId: string | null) => Promise<void>;
 }
+
+export interface ProfileStore {
+  profile: Profile | null;
+  initialized: boolean;
+  setProfile: (profile: Profile | null) => void;
+  setInitialized: (initialized: boolean) => void;
+  fetchProfile: () => Promise<void>;
+}

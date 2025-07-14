@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { UserContext } from "@/components/context/user-context";
 import { Sidebar } from "@/components/sidebar";
+import { useProfileStore } from "@/lib/stores/useProfileStore";
 import { createClient } from "@/lib/supabase/client";
 
 export default function Layout({
@@ -15,6 +16,7 @@ export default function Layout({
   children: ReactNode;
 }>) {
   const [user, setUser] = useState<User | null>(null);
+  const { fetchProfile } = useProfileStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -39,6 +41,8 @@ export default function Layout({
         setUser(null);
       }
     });
+
+    fetchProfile();
 
     return () => {
       listener?.subscription.unsubscribe();

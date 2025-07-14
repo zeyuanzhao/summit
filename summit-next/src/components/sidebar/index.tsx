@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { useContext } from "react";
 
-import { UserContext } from "../context/user-context";
+import { useProfileStore } from "@/lib/stores/useProfileStore";
+
 import { LogoutButton } from "../logout-button";
 import { ThemeToggle } from "../theme-toggle";
 import { Button } from "../ui/button";
 
 export function Sidebar() {
-  const user = useContext(UserContext);
+  const { profile, initialized } = useProfileStore();
   return (
     <div className="relative flex h-full w-52 min-w-52 flex-col p-6 px-4">
       <div className="px absolute left-0 top-0 flex w-full flex-row items-start justify-between p-6 pl-8 pr-4">
@@ -30,23 +30,24 @@ export function Sidebar() {
         </Button>
       </div>
       <div className="absolute bottom-0 left-0 flex w-full flex-col gap-y-2 p-6 px-4">
-        {user ? (
-          <>
-            <Button variant="ghost" className="w-full justify-start">
-              {user.email}
-            </Button>
-            <LogoutButton />
-          </>
-        ) : (
-          <>
-            <Button variant="outline" className="w-full" asChild>
-              <Link href="/auth/signup">Sign Up</Link>
-            </Button>
-            <Button variant="ghost" className="w-full" asChild>
-              <Link href="/auth/login">Log In</Link>
-            </Button>
-          </>
-        )}
+        {initialized &&
+          (profile ? (
+            <>
+              <Button variant="ghost" className="w-full justify-start">
+                {profile.displayName}
+              </Button>
+              <LogoutButton />
+            </>
+          ) : (
+            <>
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/auth/signup">Sign Up</Link>
+              </Button>
+              <Button variant="ghost" className="w-full" asChild>
+                <Link href="/auth/login">Log In</Link>
+              </Button>
+            </>
+          ))}
       </div>
     </div>
   );
