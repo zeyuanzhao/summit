@@ -47,7 +47,7 @@ export default function Layout({
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, [router]);
+  }, [fetchProfile, router]);
 
   return (
     <UserContext.Provider value={user}>

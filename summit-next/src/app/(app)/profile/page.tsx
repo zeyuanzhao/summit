@@ -1,16 +1,64 @@
 "use client";
 
+import camelcaseKeys from "camelcase-keys";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
 import { HiUser } from "react-icons/hi2";
 import { toast } from "sonner";
 
+import { UserContext } from "@/components/context/user-context";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Paper } from "@/interfaces";
 import { useProfileStore } from "@/lib/stores/useProfileStore";
+import { createClient } from "@/lib/supabase/client";
+import { paperSchema } from "@/lib/validation/paper";
 
 export default function Page() {
   const { profile, initialized } = useProfileStore();
+  const user = useContext(UserContext);
+  const supabase = createClient();
+  const [likedPapers, setLikedPapers] = useState<Paper[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchLikedPapers = async () => {
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("latest_like")
+        .select("paper(*)")
+        .eq("user_id", user.id)
+        .eq("event_type", "like");
+
+      if (error) {
+        toast.error("Failed to fetch liked papers.");
+        return;
+      }
+
+      const zodPapers = paperSchema
+        .array()
+        .safeParse(data.map((item) => camelcaseKeys(item.paper)));
+      if (!zodPapers.success) {
+        toast.error("Invalid paper data.");
+        return;
+      }
+      const parsedPapers = zodPapers.data;
+
+      setLikedPapers(parsedPapers);
+    };
+    if (profile) {
+      fetchLikedPapers();
+    }
+  }, [profile, supabase, user]);
 
   if (!initialized) {
     return (
@@ -42,6 +90,35 @@ export default function Page() {
           </div>
           <div className="flex h-full flex-1 flex-row justify-end">
             <Button variant="outline">Edit Profile</Button>
+          </div>
+        </div>
+        <div className="pt-8">
+          <div>
+            <h2 className="pb-2 text-3xl">Liked Papers</h2>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Venue</TableHead>
+                  <TableHead className="text-right">Published</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {likedPapers.map((paper) => (
+                  <TableRow
+                    key={paper.id}
+                    className="hover:bg-muted cursor-pointer"
+                    onClick={() => router.push(`/feed/${paper.id}`)}
+                  >
+                    <TableCell>{paper.title}</TableCell>
+                    <TableCell>{paper.venue}</TableCell>
+                    <TableCell className="text-right">
+                      {String(paper.publishedDate?.getFullYear())}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </div>
