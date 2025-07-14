@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HiUser } from "react-icons/hi2";
 
 import { useProfileStore } from "@/lib/stores/useProfileStore";
 
@@ -34,6 +35,14 @@ export function Sidebar() {
           (profile ? (
             <>
               <Button variant="ghost" className="w-full justify-start">
+                <div className="flex h-8 w-8 items-center justify-center overflow-clip rounded-full border border-gray-300">
+                  {profile!.avatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={profile!.avatar} alt="Profile Avatar" />
+                  ) : (
+                    <HiUser className="mt-4 h-36 w-36" />
+                  )}
+                </div>
                 {profile.displayName}
               </Button>
               <LogoutButton />
