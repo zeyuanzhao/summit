@@ -4,6 +4,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { Paper } from "@/interfaces";
+import { urlForPaper } from "@/lib/paper";
 
 import { Button } from "../ui/button";
 import {
@@ -19,7 +20,7 @@ export function PaperCard({
   id,
   title,
   abstract,
-  canonicalId: doi,
+  canonicalId,
   className,
   ref,
   summary,
@@ -51,8 +52,12 @@ export function PaperCard({
         <Button variant="outline" asChild>
           <Link href={`/paper/${id}`}>View Paper</Link>
         </Button>
-        <Link href={`https://doi.org/${doi}`} target="_blank">
-          {doi}
+        <Link
+          href={urlForPaper(canonicalId)}
+          target="_blank"
+          className="hover:underline"
+        >
+          {canonicalId}
         </Link>
       </CardFooter>
     </Card>

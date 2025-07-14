@@ -1,14 +1,9 @@
 "use client";
 
-import { Metadata } from "next";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { createClient } from "@/lib/supabase/client";
-
-export const metadata: Metadata = {
-  title: "Authentication",
-};
 
 export default function Layout({
   children,
