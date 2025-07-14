@@ -40,10 +40,16 @@ export function PaperCard({
             <TabsTrigger value="summary">Summary</TabsTrigger>
             <TabsTrigger value="abstract">Abstract</TabsTrigger>
           </TabsList>
-          <TabsContent value="summary" className="prose dark:prose-invert">
+          <TabsContent
+            value="summary"
+            className="prose dark:prose-invert overflow-auto"
+          >
             <Markdown remarkPlugins={[remarkGfm]}>{summary}</Markdown>
           </TabsContent>
-          <TabsContent value="abstract" className="prose dark:prose-invert">
+          <TabsContent
+            value="abstract"
+            className="prose dark:prose-invert overflow-auto"
+          >
             <Markdown remarkPlugins={[remarkGfm]}>{abstract}</Markdown>
           </TabsContent>
         </Tabs>

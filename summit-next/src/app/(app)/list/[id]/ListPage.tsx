@@ -118,7 +118,7 @@ export function ListPage({
             {currPapers.map((paper) => (
               <TableRow
                 key={paper.id}
-                className="cursor-pointer hover:bg-gray-100"
+                className="hover:bg-muted cursor-pointer"
                 onClick={() => router.push(`/feed/${paper.id}`)}
               >
                 <TableCell>{paper.title}</TableCell>
