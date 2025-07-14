@@ -5,7 +5,10 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
-export const metadata: Metadata = {};
+export const metadata: Metadata = {
+  title: "Summit",
+  description: "Scroll through a short-form feed of research papers",
+};
 
 export default function RootLayout({
   children,

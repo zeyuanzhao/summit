@@ -26,6 +26,14 @@ export default function Page() {
   }, [fetchInitialFeed]);
 
   useEffect(() => {
+    if (feed.length > 0 && feed[currentPage]?.title) {
+      document.title = feed[currentPage].title;
+    } else {
+      document.title = "Feed";
+    }
+  }, [feed, currentPage]);
+
+  useEffect(() => {
     if (feed.length > 0) {
       window.history.replaceState(null, "", `/feed/${feed[0].id}`);
     }
