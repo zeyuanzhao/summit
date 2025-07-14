@@ -1,4 +1,5 @@
 import camelcaseKeys from "camelcase-keys";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -7,6 +8,11 @@ import { createClient } from "@/lib/supabase/server";
 import { listSchema } from "@/lib/validation/list";
 
 import { ListsPage } from "./ListsPage";
+
+export const metadata: Metadata = {
+  title: "Lists",
+  description: "Your personal lists of papers",
+};
 
 export default async function Page() {
   const supabase = await createClient();

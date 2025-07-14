@@ -4,7 +4,7 @@ import { DropdownMenuRadioGroup } from "@radix-ui/react-dropdown-menu";
 import camelcaseKeys from "camelcase-keys";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HiChevronDown } from "react-icons/hi2";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -68,6 +68,15 @@ export function ListPage({
     setCurrPapers(zodNewPapers.data);
     window.history.pushState(null, "", `/list/${listId}`);
   };
+
+  useEffect(() => {
+    window.history.pushState(null, "", `/list/${currId}`);
+    if (currList) {
+      document.title = currList.title;
+    } else {
+      document.title = "List";
+    }
+  }, [currList, currId]);
 
   return (
     <div className="flex max-w-6xl flex-1 flex-col px-28 py-20">
