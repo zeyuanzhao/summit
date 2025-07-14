@@ -74,7 +74,7 @@ export function EditProfileDialog({
       .update({
         username,
         display_name: displayName,
-        avatar,
+        avatar: avatar || null,
       })
       .eq("id", profile?.id);
 

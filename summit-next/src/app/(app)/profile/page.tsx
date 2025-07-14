@@ -1,14 +1,13 @@
 "use client";
 
 import camelcaseKeys from "camelcase-keys";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { HiUser } from "react-icons/hi2";
 import { toast } from "sonner";
 
 import { UserContext } from "@/components/context/user-context";
-import { Button } from "@/components/ui/button";
+import { EditProfileDialog } from "@/components/edit-profile-dialog";
 import {
   Table,
   TableBody,
@@ -23,7 +22,7 @@ import { createClient } from "@/lib/supabase/client";
 import { paperSchema } from "@/lib/validation/paper";
 
 export default function Page() {
-  const { profile, initialized } = useProfileStore();
+  const { profile, initialized, setProfile } = useProfileStore();
   const user = useContext(UserContext);
   const supabase = createClient();
   const [likedPapers, setLikedPapers] = useState<Paper[]>([]);
@@ -79,7 +78,8 @@ export default function Page() {
         <div className="mt-16 flex flex-row items-center gap-x-6">
           <div className="flex h-20 w-20 items-center justify-center overflow-clip rounded-full border border-gray-300">
             {profile!.avatar ? (
-              <Image src={profile!.avatar} alt="Profile Avatar" className="" />
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={profile!.avatar} alt="Profile Avatar" />
             ) : (
               <HiUser className="mt-4 h-36 w-36" />
             )}
@@ -89,7 +89,11 @@ export default function Page() {
             <p className="text-xl text-gray-500">@{profile!.username}</p>
           </div>
           <div className="flex h-full flex-1 flex-row justify-end">
-            <Button variant="outline">Edit Profile</Button>
+            <EditProfileDialog
+              onEdit={(newProfile) => {
+                setProfile(newProfile);
+              }}
+            />
           </div>
         </div>
         <div className="pt-8">

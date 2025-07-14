@@ -7,6 +7,6 @@ export const profileSchema = z.object({
   createdAt: z.coerce.date().optional(),
   username: z.string().min(1),
   displayName: z.string().min(1),
-  avatar: z.string().min(1).optional().nullable(),
+  avatar: z.string().optional().nullable(),
   embedding: z.string().transform(parseStringVector).nullable().optional(),
 });
