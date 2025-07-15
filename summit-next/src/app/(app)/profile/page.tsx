@@ -59,6 +59,10 @@ export default function Page() {
     }
   }, [profile, supabase, user]);
 
+  useEffect(() => {
+    document.title = `${profile?.displayName || "Profile"} | Summit`;
+  }, [profile]);
+
   if (!initialized) {
     return (
       <div className="flex flex-1 items-center justify-center">
