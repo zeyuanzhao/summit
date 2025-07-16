@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useContext, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -115,8 +116,13 @@ export function PaperPage({
             <div className="flex flex-1 flex-row">
               {paperDetail?.tags?.map((tag) => {
                 return (
-                  <Badge key={tag.id} variant="outline" className="mr-2">
-                    {tag.name}
+                  <Badge
+                    key={tag.id}
+                    variant="outline"
+                    className="mr-2"
+                    asChild
+                  >
+                    <Link href={`/tag/${tag.id}`}>{tag.name}</Link>
                   </Badge>
                 );
               })}

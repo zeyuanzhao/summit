@@ -7,8 +7,12 @@ import { tagSchema } from "@/lib/validation/tag";
 
 import { TagPage } from "./TagPage";
 
-export default async function Page({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   const supabase = await createClient();
   const tagPromise = supabase.from("tag").select("*").eq("id", id).single();
   const paperPromise = supabase
