@@ -63,7 +63,13 @@ export default function Page() {
     document.title = `${profile?.displayName || "Profile"} | Summit`;
   }, [profile]);
 
-  if (!initialized) {
+  useEffect(() => {
+    if (!profile && initialized) {
+      router.push("/auth/login");
+    }
+  }, [profile, initialized, router]);
+
+  if (!initialized || !profile) {
     return (
       <div className="flex flex-1 items-center justify-center">
         <p>Loading...</p>
@@ -71,17 +77,12 @@ export default function Page() {
     );
   }
 
-  if (!profile && initialized) {
-    toast.error("You must be logged in to view this page.");
-    router.push("/login");
-  }
-
   return (
     <div className="flex flex-1 flex-row justify-center">
       <div className="flex max-w-6xl flex-1 flex-col px-28 py-20 pt-8">
         <div className="mt-16 flex flex-row items-center gap-x-6">
           <div className="flex h-20 w-20 items-center justify-center overflow-clip rounded-full border border-gray-300">
-            {profile!.avatar ? (
+            {profile?.avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={profile!.avatar} alt="Profile Avatar" />
             ) : (
@@ -89,8 +90,8 @@ export default function Page() {
             )}
           </div>
           <div>
-            <p className="text-4xl font-bold">{profile!.displayName}</p>
-            <p className="text-xl text-gray-500">@{profile!.username}</p>
+            <p className="text-4xl font-bold">{profile?.displayName}</p>
+            <p className="text-xl text-gray-500">@{profile?.username}</p>
           </div>
           <div className="flex h-full flex-1 flex-row justify-end">
             <EditProfileDialog

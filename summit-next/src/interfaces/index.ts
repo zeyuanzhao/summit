@@ -5,6 +5,7 @@ import { listSchema } from "@/lib/validation/list";
 import { paperSchema } from "@/lib/validation/paper";
 import { paperDetailSchema } from "@/lib/validation/paperDetail";
 import { profileSchema } from "@/lib/validation/profile";
+import { tagSchema } from "@/lib/validation/tag";
 
 export type Paper = z.infer<typeof paperSchema>;
 
@@ -15,6 +16,8 @@ export type Event = z.infer<typeof eventSchema>;
 export type Profile = z.infer<typeof profileSchema>;
 
 export type PaperDetail = z.infer<typeof paperDetailSchema>;
+
+export type Tag = z.infer<typeof tagSchema>;
 
 export interface PaperUserData {
   liked: boolean;

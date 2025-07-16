@@ -17,6 +17,7 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
     const { user } = (await supabase.auth.getUser()).data;
     const userId = user?.id;
     if (!userId) {
+      get().setInitialized(true);
       return;
     }
     const { data, error } = await supabase
@@ -24,6 +25,7 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       .select("*")
       .eq("id", userId)
       .single();
+    get().setInitialized(true);
     if (error) {
       toast.error("Failed to fetch profile.");
     }
@@ -34,6 +36,5 @@ export const useProfileStore = create<ProfileStore>()((set, get) => ({
       return;
     }
     get().setProfile(parsedProfile);
-    get().setInitialized(true);
   },
 }));
