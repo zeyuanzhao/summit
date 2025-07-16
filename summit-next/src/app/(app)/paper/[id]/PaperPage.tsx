@@ -1,6 +1,11 @@
+"use client";
+
+import { useContext, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 
+import { UserContext } from "@/components/context/user-context";
 import { ErrorMessage } from "@/components/error";
 import { LikePaperButton } from "@/components/like-paper-button";
 import { SavePaperMenu } from "@/components/save-paper-menu";
@@ -16,6 +21,82 @@ export function PaperPage({
   liked?: boolean;
   lists?: string[];
 }) {
+  const user = useContext(UserContext);
+  const [likedState, setLikedState] = useState(liked);
+  const [paperLists, setPaperLists] = useState(lists || []);
+  const onLike = async () => {
+    const id = paperDetail?.id;
+    if (!id) {
+      toast.error("Paper ID is missing");
+      return;
+    }
+    const eventType = likedState ? "unlike" : "like";
+    if (!user?.id) {
+      toast.error(`You must be logged in to ${eventType} a paper.`);
+      return;
+    }
+    let error;
+    if (eventType === "like") {
+      ({ error } = await fetch(`/api/papers/${id}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((res) => res.json()));
+    } else if (eventType === "unlike") {
+      ({ error } = await fetch(`/api/papers/${id}/unlike`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then((res) => res.json()));
+    }
+    if (error) {
+      toast.error(error || `Failed to ${eventType} paper.`);
+      return;
+    }
+    setLikedState(!likedState);
+  };
+  const onSave = async (listId: string) => {
+    const id = paperDetail?.id;
+    if (!id) {
+      toast.error("Paper ID is missing");
+      return;
+    }
+    const eventType = paperLists.includes(listId) ? "unsave" : "save";
+    if (!user?.id) {
+      toast.error(`You must be logged in to ${eventType} a paper.`);
+      return;
+    }
+    let error;
+    if (eventType === "save") {
+      ({ error } = await fetch(`/api/papers/${id}/save`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ listId }),
+      }).then((res) => res.json()));
+    } else if (eventType === "unsave") {
+      ({ error } = await fetch(`/api/papers/${id}/unsave`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ listId }),
+      }).then((res) => res.json()));
+    }
+    if (error) {
+      toast.error(error || `Failed to ${eventType} paper.`);
+      return;
+    }
+    if (eventType === "save") {
+      setPaperLists((prev) => [...prev, listId]);
+    } else {
+      setPaperLists((prev) => prev.filter((list) => list !== listId));
+    }
+    toast.success("Paper saved successfully.");
+  };
   if (!paperDetail) {
     return <ErrorMessage title="Paper not found." />;
   }
@@ -41,8 +122,12 @@ export function PaperPage({
               })}
             </div>
             <div className="flex flex-row items-center gap-2">
-              <LikePaperButton paperId={paperDetail.id} liked={liked} />
-              <SavePaperMenu />
+              <LikePaperButton liked={likedState} onLike={onLike} />
+              <SavePaperMenu
+                handleSave={onSave}
+                paperLists={paperLists}
+                saved={paperLists.length > 0}
+              />
             </div>
           </div>
           <div className="mt-4 flex flex-1 flex-col">

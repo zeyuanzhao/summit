@@ -33,7 +33,7 @@ export async function POST(
   const parsed = eventSchema.safeParse({
     userId: user.id,
     paperId,
-    eventType: "save",
+    eventType: "unsave",
     payload: {
       listId,
     },
