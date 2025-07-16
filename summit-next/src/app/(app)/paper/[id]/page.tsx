@@ -1,14 +1,12 @@
 import camelcaseKeys from "camelcase-keys";
-import { HiOutlineHeart } from "react-icons/hi2";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 import { ErrorMessage } from "@/components/error";
-import { SavePaperMenu } from "@/components/save-paper-menu";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { eventSchema } from "@/lib/validation/event";
+import { listPaperSchema } from "@/lib/validation/listPaper";
 import { paperDetailSchema } from "@/lib/validation/paperDetail";
+
+import { PaperPage } from "./PaperPage";
 
 export default async function Page({
   params,
@@ -17,12 +15,28 @@ export default async function Page({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data: paperData, error: paperError } = await supabase
+  const paperPromise = supabase
     .from("paper_detail")
     .select("*")
     .eq("id", id)
     .single();
-  if (paperError) {
+  const likePromise = supabase
+    .from("latest_like")
+    .select("*")
+    .eq("paper_id", id);
+  const savePromise = supabase
+    .from("list_paper")
+    .select("*")
+    .eq("paper_id", id);
+  const [paperResult, likeResult, saveResult] = await Promise.all([
+    paperPromise,
+    likePromise,
+    savePromise,
+  ]);
+  const { data: paperData, error: paperError } = paperResult;
+  const { data: likeData, error: likeError } = likeResult;
+  const { data: saveData, error: saveError } = saveResult;
+  if (paperError || likeError || saveError) {
     return <ErrorMessage title="Failed to load paper details." />;
   }
 
@@ -34,49 +48,24 @@ export default async function Page({
 
   const parsedPaper = zodPaper.data;
 
-  return (
-    <div className="flex flex-1 flex-row justify-center">
-      <div className="flex max-w-6xl flex-1 flex-col px-28 py-20 pt-8">
-        <div className="mt-16 flex flex-col">
-          <h1 className="text-4xl font-bold">{parsedPaper?.title}</h1>
-          <div className="mt-2">
-            <p className="text-lg">
-              {parsedPaper?.authors?.map((author) => author.name).join(", ")}
-            </p>
-          </div>
-          <div className="mt-4 flex flex-row">
-            <div className="flex flex-1 flex-row">
-              {parsedPaper?.tags?.map((tag) => {
-                return (
-                  <Badge key={tag.id} variant="outline" className="mr-2">
-                    {tag.name}
-                  </Badge>
-                );
-              })}
-            </div>
-            <div className="flex flex-row items-center gap-2">
-              <Button variant="outline" size="icon">
-                <HiOutlineHeart />
-              </Button>
-              <SavePaperMenu />
-            </div>
-          </div>
-          <div className="mt-4 flex flex-1 flex-col">
-            <div className="dark:bg-muted bg-muted prose dark:prose-invert !max-w-none flex-1 rounded-2xl p-8">
-              <h2>Summary</h2>
-              <Markdown remarkPlugins={[remarkGfm]}>
-                {parsedPaper?.summary || "No summary available."}
-              </Markdown>
-            </div>
-            <div className="prose dark:prose-invert mb-8 mt-4 !max-w-none p-4">
-              <h2>Abstract</h2>
-              <Markdown remarkPlugins={[remarkGfm]}>
-                {parsedPaper?.abstract || "No abstract available."}
-              </Markdown>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  const zodLike = eventSchema.array().safeParse(camelcaseKeys(likeData));
+
+  if (!zodLike.success) {
+    return <ErrorMessage title="Invalid like data." />;
+  }
+
+  const parsedLike = zodLike.data[0];
+
+  const zodSave = listPaperSchema.array().safeParse(camelcaseKeys(saveData));
+
+  if (!zodSave.success) {
+    return <ErrorMessage title="Invalid save data." />;
+  }
+
+  const parsedSave = zodSave.data;
+
+  const liked = parsedLike ? parsedLike.eventType === "like" : false;
+  const lists = parsedSave.map((item) => item.listId);
+
+  return <PaperPage paperDetail={parsedPaper} liked={liked} lists={lists} />;
 }
